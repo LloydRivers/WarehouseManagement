@@ -1,6 +1,7 @@
-export class InvalidEmailError extends Error {
+// src/utils/Error.ts
+export class DomainError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "InvalidEmailError";
+    this.name = "DomainError";
   }
 }
