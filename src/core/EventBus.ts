@@ -1,6 +1,6 @@
 // src/eventBus.ts
 import { IEvent } from "../types/events";
-import { ISubscriber } from "../types/Subscriber";
+import { ISubscriber } from "../types/subscriber";
 import { ILogger } from "../utils/Logger";
 
 export class EventBus {
@@ -16,7 +16,9 @@ export class EventBus {
       this.subscribers.set(eventType, []);
     }
     this.subscribers.get(eventType)!.push(subscriber);
-    this.logger.info(`[EventBus] ${subscriber.getName()} subscribed to ${eventType}`);
+    this.logger.info(
+      `[EventBus] ${subscriber.getName()} subscribed to ${eventType}`
+    );
   }
 
   publish(event: IEvent): void {
@@ -32,7 +34,9 @@ export class EventBus {
     }
 
     subscribers.forEach((subscriber) => {
-      this.logger.info(`[EventBus] Notifying ${subscriber.getName()} about ${eventType}`);
+      this.logger.info(
+        `[EventBus] Notifying ${subscriber.getName()} about ${eventType}`
+      );
       subscriber.handleEvent(event);
     });
   }
