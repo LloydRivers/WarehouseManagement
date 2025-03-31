@@ -11,9 +11,9 @@ export class Customer {
     public readonly id: string,
     public readonly name: string,
     email: string,
-    private shippingAddress: IShippingAddress // Required in constructor
+    private shippingAddress: IShippingAddress
   ) {
-    this.setEmail(email); // Use setter to ensure validation
+    this.setEmail(email);
   }
 
   getShippingAddress(): IShippingAddress {
