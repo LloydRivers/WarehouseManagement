@@ -1,15 +1,15 @@
-// Supplier.ts
-import { IAddress, IOrderHistory, ISupplier } from "../types";
-import { InvalidEmailError } from "../utils/Error";
+// src/models/Supplier.ts
+import { IAddress, IOrderHistory, ISupplier } from "../../types";
+import { DomainError } from "../../utils/Error";
+import { ValidationUtils } from "../../utils/ValidationUtils";
 
 // This class represents a supplier. The company name is marked as "readonly"
-// because it should not change after instantiation. The contact person, email,
-// phone number, and address can be updated in case of changes (e.g., employee changes).
+// because it should not change after instantiation. The contact person and email,
+// can be updated in case of changes (e.g., employee leaves the company).
 
 export class Supplier implements ISupplier {
   private contactPerson: string;
   private email: string;
-  private phoneNumber: string;
   private address: IAddress;
   private orderHistory: IOrderHistory[] = [];
 
@@ -18,12 +18,10 @@ export class Supplier implements ISupplier {
     public readonly name: string,
     contactPerson: string,
     email: string,
-    phoneNumber: string,
     address: IAddress
   ) {
     this.contactPerson = contactPerson;
     this.email = email;
-    this.phoneNumber = phoneNumber;
     this.address = address;
   }
 
@@ -44,7 +42,7 @@ export class Supplier implements ISupplier {
   }
 
   getPhoneNumber(): string {
-    return this.phoneNumber;
+    return this.address.phoneNumber;
   }
 
   getAddress(): IAddress {
@@ -56,32 +54,20 @@ export class Supplier implements ISupplier {
   }
 
   setEmail(newEmail: string): void {
-    if (this.validateEmail(newEmail)) {
-      this.email = newEmail;
-    } else {
-      throw new InvalidEmailError("Invalid email format.");
+    if (!ValidationUtils.validateEmail(newEmail)) {
+      throw new DomainError("Invalid email format.");
     }
+    this.email = newEmail;
   }
 
   setPhoneNumber(newPhoneNumber: string): void {
-    if (this.validatePhoneNumber(newPhoneNumber)) {
-      this.phoneNumber = newPhoneNumber;
-    } else {
-      throw new InvalidEmailError("Invalid phone number format.");
+    if (!ValidationUtils.validatePhoneNumber(newPhoneNumber)) {
+      throw new Error("Invalid phone number format.");
     }
+    this.address = { ...this.address, phoneNumber: newPhoneNumber };
   }
 
   setAddress(newAddress: IAddress): void {
     this.address = newAddress;
-  }
-
-  private validateEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  private validatePhoneNumber(phoneNumber: string): boolean {
-    const phoneRegex = /^[\d\s\+\-()]{8,20}$/;
-    return phoneRegex.test(phoneNumber);
   }
 }
