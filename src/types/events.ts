@@ -1,17 +1,17 @@
 // src/types/events.ts
+
 export interface IEvent {
   type: string;
-  timestamp: Date;
-  payload: any;
-  token: string;
+  payload: unknown;
 }
 
-export interface StockLowEvent extends IEvent {
-  type: "StockLow";
+export interface CustomerOrderCreatedEvent extends IEvent {
+  type: "CustomerOrderCreated";
   payload: {
+    customerId: string;
+    orderId: string;
     productId: string;
-    currentStock: number;
-    threshold: number;
+    quantity: number;
   };
 }
 
@@ -19,11 +19,13 @@ export interface StockUpdatedEvent extends IEvent {
   type: "StockUpdated";
   payload: {
     productId: string;
-    newStock: number;
+    newQuantity: number;
   };
 }
-
-export interface ISubscriber {
-  update(event: IEvent): void;
-  getName(): string;
+export interface InventoryLowEvent extends IEvent {
+  type: "InventoryLow";
+  payload: {
+    productId: string;
+    quantity: number;
+  };
 }
