@@ -1,23 +1,21 @@
 // src/services/CustomerService.ts
 import { EventBus } from "../core/EventBus";
-import { Customer } from "../models/Customer/Customer";
+import { CustomerRepository } from "../repository/CustomerRepository";
 import { IOrderHistory } from "../types/";
 import { DomainError } from "../utils/Error";
 
 export class CustomerService {
-  private customers: Map<string, Customer>;
-  private eventBus: EventBus;
-
-  constructor(eventBus: EventBus) {
-    this.customers = new Map();
-    this.eventBus = eventBus;
-  }
+  constructor(
+    private customerRepository: CustomerRepository,
+    private eventBus: EventBus
+  ) {}
 
   placeOrder(customerId: string, order: IOrderHistory): void {
-    const customer = this.customers.get(customerId);
+    const customer = this.customerRepository.getById(customerId);
     if (!customer) throw new DomainError("Customer not found");
 
     customer.placeOrder(order);
+    this.customerRepository.update(customer); // Persist the change
 
     this.eventBus.publish({
       type: "CustomerOrderCreated",
@@ -27,7 +25,5 @@ export class CustomerService {
         products: order.products,
       },
     });
-
-    // Stuff goes here
   }
 }

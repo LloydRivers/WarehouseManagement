@@ -2,6 +2,8 @@
 import { ConcreteMix } from "./models/inventory/ConcreteMix";
 import { Supplier } from "./models/Supplier/Supplier";
 import { Customer } from "./models/Customer/Customer";
+import { CustomerService } from "./services/CustomerService";
+import { EventBus } from "./core/EventBus";
 
 // Step 1: Create ONE supplier so complexity doesn't increase
 const supplier1 = new Supplier(

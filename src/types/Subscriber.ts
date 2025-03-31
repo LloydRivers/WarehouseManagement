@@ -1,4 +1,4 @@
-// src/types/Subscriber.ts
+// src/types/subscriber.ts
 import { IEvent } from "./events";
 
 export interface ISubscriber {
