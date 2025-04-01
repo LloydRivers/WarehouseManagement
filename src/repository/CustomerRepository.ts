@@ -16,13 +16,11 @@ export class CustomerRepository {
     return customers.find((customer) => customer.id === customerId);
   }
 
-  // You can add save and update logic here, depending on the data source's functionality
   save(customer: Customer): void {
     const customers = this.dataSource.loadCustomers();
     if (customers.some((existing) => existing.id === customer.id)) {
       throw new DomainError("Customer already exists");
     }
-    // Logic to save the customer (this could vary depending on the data source)
   }
 
   update(customer: Customer): void {
@@ -33,6 +31,5 @@ export class CustomerRepository {
     if (!existingCustomer) {
       throw new DomainError("Cannot update non-existent customer");
     }
-    // Logic to update the customer
   }
 }
