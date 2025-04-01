@@ -8,7 +8,6 @@ export class CustomerRepository {
 
   constructor(dataSource: ICustomerDataSource) {
     this.dataSource = dataSource;
-    console.log("CustomerRepository initialized with data source:", dataSource);
   }
 
   getById(customerId: string): Customer | undefined {
