@@ -4,8 +4,9 @@ export interface IOrderItem {
   unitPrice: number;
 }
 
-export interface IOrderHistory {
-  orderId: string;
+export interface CustomerOrder {
+  customerId: string;
+  id: string;
   orderDate: string;
   products: { productId: string; quantity: number; price: number }[];
 }
