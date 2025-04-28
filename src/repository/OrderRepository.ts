@@ -9,6 +9,7 @@ export class OrderRepository {
   }
 
   getByCustomerId(customerId: string): CustomerOrder[] {
+    console.log("Fetching orders for customer ID:", customerId);
     return this.orders.filter((order) => order.customerId === customerId);
   }
 
@@ -16,6 +17,7 @@ export class OrderRepository {
     const index = this.orders.findIndex(({ id }) => id === order.id);
     if (index !== -1) {
       this.orders[index] = order;
+      console.log("Order updated:", order);
     }
   }
 }

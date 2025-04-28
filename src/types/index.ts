@@ -8,7 +8,7 @@ export interface CustomerOrder {
   customerId: string;
   id: string;
   orderDate: string;
-  products: { productId: string; quantity: number; price: number }[];
+  products: IOrderItem[];
 }
 
 export interface IAddress {

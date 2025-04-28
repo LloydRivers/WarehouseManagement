@@ -10,22 +10,10 @@ export interface CustomerOrderCreatedEvent extends IEvent {
   payload: {
     customerId: string;
     orderId: string;
-    productId: string;
-    quantity: number;
+    products: { productId: string; quantity: number }[];
   };
 }
 
-export interface StockUpdatedEvent extends IEvent {
-  type: "StockUpdated";
-  payload: {
-    productId: string;
-    newQuantity: number;
-  };
-}
-export interface InventoryLowEvent extends IEvent {
-  type: "InventoryLow";
-  payload: {
-    productId: string;
-    quantity: number;
-  };
-}
+export const EVENT_TYPES = {
+  CUSTOMER_ORDER_CREATED: "CustomerOrderCreated",
+} as const;

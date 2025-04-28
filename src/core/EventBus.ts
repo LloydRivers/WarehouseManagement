@@ -12,6 +12,7 @@ export class EventBus {
   }
 
   subscribe(eventType: string, subscriber: ISubscriber): void {
+    
     if (!this.subscribers.has(eventType)) {
       this.subscribers.set(eventType, []);
     }
