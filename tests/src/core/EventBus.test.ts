@@ -94,21 +94,23 @@ describe("EventBus", () => {
     }
   });
 
-  it("unsubscribes a subscriber that was never subscribed", () => {
-    const nonExistentSubscriber: ISubscriber = {
-      getName: vi.fn(() => "NonExistentSubscriber"),
+  it("returns false and logs a warning if trying to unsubscribe a subscriber that was never subscribed", () => {
+    const subscriber: ISubscriber = {
+      getName: vi.fn(() => "GhostSubscriber"),
       handleEvent: vi.fn(),
     };
-    const unsubscribedCount = eventBus.unsubscribe(
-      "NON_EXISTENT_EVENT",
-      nonExistentSubscriber
-    );
+
+    eventBus.subscribe("EVENT_X", subscriber);
+    eventBus.unsubscribe("EVENT_X", subscriber);
+
+    const result = eventBus.unsubscribe("EVENT_X", subscriber);
+
+    expect(result).toBe(false);
     expect(mockLogger.info).toHaveBeenCalledWith(
-      "[EventBus] Attempting to unsubscribe NonExistentSubscriber from NON_EXISTENT_EVENT"
+      "[EventBus] Attempting to unsubscribe GhostSubscriber from EVENT_X"
     );
-    expect(unsubscribedCount).toBe(0);
-    expect(mockLogger.info).toHaveBeenCalledWith(
-      "[EventBus] NonExistentSubscriber unsubscribed from 0 event types"
+    expect(mockLogger.warn).toHaveBeenCalledWith(
+      "[EventBus] Cannot unsubscribe GhostSubscriber from EVENT_X: no subscribers exist"
     );
   });
 
