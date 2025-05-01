@@ -43,31 +43,74 @@ describe("EventBus", () => {
     eventBus = new EventBus(mockLogger);
   });
 
-  it("handles duplicate subscriptions (should warn and not duplicate", () => {
+  it("handles duplicate subscriptions (should warn and not duplicate)", () => {
     const subscriber: ISubscriber = {
       getName: vi.fn(() => "TestSubscriber"),
       handleEvent: vi.fn(),
     };
-
     eventBus.subscribe("TEST_EVENT", subscriber);
     expect(mockLogger.info).toHaveBeenCalledWith(
       "[EventBus] TestSubscriber subscribed to TEST_EVENT"
     );
-    eventBus.subscribe("TEST_EVENT", subscriber);
-    eventBus.publish({ type: "TEST_EVENT", payload: {} });
-    expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);
 
+    eventBus.subscribe("TEST_EVENT", subscriber);
     expect(mockLogger.warn).toHaveBeenCalledWith(
       "[EventBus] TestSubscriber is already subscribed to TEST_EVENT"
     );
+
+    eventBus.publish({ type: "TEST_EVENT", payload: {} });
+    expect(mockLogger.info).toHaveBeenCalledWith(
+      "[EventBus] Publishing event: TEST_EVENT"
+    );
+
+    expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);
     expect(eventBus.getSubscribers("TEST_EVENT")).toHaveLength(1);
   });
 
-  it("publishes events with no subscribers", () => {});
+  it("publishes events with no subscribers", () => {
+    eventBus.publish({ type: "NO_SUBSCRIBERS_EVENT", payload: {} });
+    expect(mockLogger.info).toHaveBeenCalledWith(
+      "[EventBus] Publishing event: NO_SUBSCRIBERS_EVENT"
+    );
+    expect(mockLogger.info).toHaveBeenCalledWith(
+      "[EventBus] No subscribers for NO_SUBSCRIBERS_EVENT"
+    );
+  });
 
-  it("handles error when a subscriber throws an exception during event handling", () => {});
+  it("throws and logs an error when a subscriber fails to handle an event", () => {
+    const failingSubscriber: ISubscriber = {
+      getName: vi.fn(() => "FailingSubscriber"),
+      handleEvent: vi.fn(() => {
+        throw new Error("Failed to handle event");
+      }),
+    };
+    eventBus.subscribe("FAIL_EVENT", failingSubscriber);
+    try {
+      eventBus.publish({ type: "FAIL_EVENT", payload: {} });
+    } catch (error) {
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "[EventBus] Error notifying FailingSubscriber about FAIL_EVENT: Failed to handle event"
+      );
+    }
+  });
 
-  it("unsubscribes a subscriber that was never subscribed", () => {});
+  it("unsubscribes a subscriber that was never subscribed", () => {
+    const nonExistentSubscriber: ISubscriber = {
+      getName: vi.fn(() => "NonExistentSubscriber"),
+      handleEvent: vi.fn(),
+    };
+    const unsubscribedCount = eventBus.unsubscribe(
+      "NON_EXISTENT_EVENT",
+      nonExistentSubscriber
+    );
+    expect(mockLogger.info).toHaveBeenCalledWith(
+      "[EventBus] Attempting to unsubscribe NonExistentSubscriber from NON_EXISTENT_EVENT"
+    );
+    expect(unsubscribedCount).toBe(0);
+    expect(mockLogger.info).toHaveBeenCalledWith(
+      "[EventBus] NonExistentSubscriber unsubscribed from 0 event types"
+    );
+  });
 
   it("unsubscribes from an event type that doesn't exist", () => {});
   it("removes empty subscriber lists after unsubscribing", () => {});
