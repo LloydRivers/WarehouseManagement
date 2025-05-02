@@ -1,17 +1,17 @@
+import { InMemoryProductDataSource } from "../loader/InMemoryProductDataSource";
 import { Product } from "../models/inventory/Product";
 
 export class InventoryRepository {
-  private products: Product[] = []; // Products should be pre-defined with initial quantities
+  private dataSource: InMemoryProductDataSource;
 
-//   getStock(productId: string): number {
-//     const product = this.products.find((p) => p.id === productId);
-//     return product ? product.quantity : 0;
-//   }
+  constructor(dataSource: InMemoryProductDataSource) {
+    this.dataSource = dataSource;
+  }
 
-//   reduceStock(productId: string, quantity: number): void {
-//     const product = this.products.find((p) => p.id === productId);
-//     if (product) {
-//       product.quantity -= quantity;
-//     }
+  // Fetches product by ID
+  getById(productId: string): Product | undefined {
+    const products = this.dataSource.loadProducts();
+    console.log(products);
+    return products.find((product) => product.getId() === productId);
   }
 }

@@ -4,6 +4,15 @@ import { CustomerRepository } from "../repository/CustomerRepository";
 import { OrderRepository } from "../repository/OrderRepository";
 import { CustomerOrder } from "../types/";
 import { DomainError } from "../utils/Error";
+// So, lets just say we did use the ebent bus at this point to publish an event
+// this.eventBus.publish("order.placed", order);
+// What would be listening for this event?
+// 1. InventoryService
+// 2. NotificationService
+// 3. PaymentService
+// 4. ShippingService
+// 5. AnalyticsService
+// CustomerOrderCreatedEvent
 
 export class CustomerService {
   constructor(
@@ -17,23 +26,11 @@ export class CustomerService {
     if (!customer) throw new DomainError("Customer not found");
 
     this.orderRepository.save(order);
-
-    // So, lets just say we did use the ebent bus at this point to publish an event
-    // this.eventBus.publish("order.placed", order);
-    // What would be listening for this event?
-    // 1. InventoryService
-    // 2. NotificationService
-    // 3. PaymentService
-    // 4. ShippingService
-    // 5. AnalyticsService
-    // CustomerOrderCreatedEvent
-
     this.eventBus.publish({
       type: "CustomerOrderCreated",
       payload: {
-        customerId: order.customerId,
-        orderId: order.id,
         products: order.products.map(({ productId, quantity }) => ({
+          // we know this is product-001
           productId,
           quantity,
         })),
