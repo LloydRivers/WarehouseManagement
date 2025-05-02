@@ -133,7 +133,28 @@ describe("EventBus", () => {
     expect(eventBus.getSubscribers("NON_EXISTENT_EVENT")).toHaveLength(0);
   });
 
-  it("removes empty subscriber lists after unsubscribing", () => {});
+  it("removes empty subscriber lists after unsubscribing", () => {
+    const subscriber: ISubscriber = {
+      getName: vi.fn(() => "SoloSubscriber"),
+      handleEvent: vi.fn(),
+    };
+  
+    eventBus.subscribe("SINGLE_EVENT", subscriber);
+    const result = eventBus.unsubscribe("SINGLE_EVENT", subscriber);
+  
+    expect(result).toBe(true);
+    expect(mockLogger.info).toHaveBeenCalledWith(
+      "[EventBus] Attempting to unsubscribe SoloSubscriber from SINGLE_EVENT"
+    );
+    expect(mockLogger.info).toHaveBeenCalledWith(
+      "[EventBus] SoloSubscriber unsubscribed from SINGLE_EVENT"
+    );
+    expect(mockLogger.info).toHaveBeenCalledWith(
+      "[EventBus] Removed empty subscriber list for SINGLE_EVENT"
+    );
+    expect(eventBus.getSubscribers("SINGLE_EVENT")).toHaveLength(0);
+  });
+  
 
   it("handles multiple subscribers for the same event", () => {});
 
