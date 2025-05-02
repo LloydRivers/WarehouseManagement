@@ -114,16 +114,42 @@ describe("EventBus", () => {
     );
   });
 
-  it("unsubscribes from an event type that doesn't exist", () => {});
+  it("unsubscribes from an event type that doesn't exist", () => {
+    const subscriber: ISubscriber = {
+      getName: vi.fn(() => "NonExistentEventSubscriber"),
+      handleEvent: vi.fn(),
+    };
+
+    eventBus.subscribe("EVENT_Y", subscriber);
+    eventBus.unsubscribe("NON_EXISTENT_EVENT", subscriber);
+
+    expect(mockLogger.info).toHaveBeenCalledWith(
+      "[EventBus] Attempting to unsubscribe NonExistentEventSubscriber from NON_EXISTENT_EVENT"
+    );
+    expect(mockLogger.warn).toHaveBeenCalledWith(
+      "[EventBus] Cannot unsubscribe NonExistentEventSubscriber from NON_EXISTENT_EVENT: no subscribers exist"
+    );
+    expect(eventBus.getSubscribers("EVENT_Y")).toHaveLength(1);
+    expect(eventBus.getSubscribers("NON_EXISTENT_EVENT")).toHaveLength(0);
+  });
+
   it("removes empty subscriber lists after unsubscribing", () => {});
+
   it("handles multiple subscribers for the same event", () => {});
+
   it("handles a single subscriber for multiple event types", () => {});
+
   it("tests performance with a large number of subscribers and events", () => {});
 
   it("handles malformed events or invalid event types", () => {});
+
   it("handles case sensitivity in event type strings", () => {});
+
   it("cleans up subscriber arrays to avoid memory leaks", () => {});
+
   it("handles special characters in event type names", () => {});
+
   it("handles null or undefined values passed as parameters", () => {});
+
   it("handles circular dependencies between subscribers", () => {});
 });
