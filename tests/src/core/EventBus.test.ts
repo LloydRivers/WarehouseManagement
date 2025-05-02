@@ -154,13 +154,77 @@ describe("EventBus", () => {
     );
     expect(eventBus.getSubscribers("SINGLE_EVENT")).toHaveLength(0);
   });
+
+  it("handles multiple subscribers for the same event", () => {
+    const subscriberOne: ISubscriber = {
+      getName: vi.fn(() => "SubscriberOne"),
+      handleEvent: vi.fn(),
+    };
   
+    const subscriberTwo: ISubscriber = {
+      getName: vi.fn(() => "SubscriberTwo"),
+      handleEvent: vi.fn(),
+    };
+  
+   
+    eventBus.subscribe("SHARED_EVENT", subscriberOne);
+    eventBus.subscribe("SHARED_EVENT", subscriberTwo);
+  
+    eventBus.publish({ type: "SHARED_EVENT", payload: {} });
 
-  it("handles multiple subscribers for the same event", () => {});
 
-  it("handles a single subscriber for multiple event types", () => {});
+    expect(subscriberOne.handleEvent).toHaveBeenCalledTimes(1);
+    expect(subscriberTwo.handleEvent).toHaveBeenCalledTimes(1);
+  
+    expect(mockLogger.info).toHaveBeenCalledWith(
+      "[EventBus] Notifying SubscriberOne about SHARED_EVENT"
+    );
+    expect(mockLogger.info).toHaveBeenCalledWith(
+      "[EventBus] Notifying SubscriberTwo about SHARED_EVENT"
+    );
+  });
 
-  it("tests performance with a large number of subscribers and events", () => {});
+  it("handles a single subscriber for multiple event types", () => {
+    const subscriber: ISubscriber = {
+      getName: vi.fn(() => "MultiEventSubscriber"),
+      handleEvent: vi.fn(),
+    };
+  
+    eventBus.subscribe("EVENT_A", subscriber);
+    eventBus.subscribe("EVENT_B", subscriber);
+  
+    eventBus.publish({ type: "EVENT_A", payload: {} });
+    eventBus.publish({ type: "EVENT_B", payload: {} });
+  
+    expect(subscriber.handleEvent).toHaveBeenCalledTimes(2);
+    expect(subscriber.handleEvent).toHaveBeenCalledWith({ type: "EVENT_A", payload: {} });
+    expect(subscriber.handleEvent).toHaveBeenCalledWith({ type: "EVENT_B", payload: {} });
+  });
+
+  it("tests performance with a large number of subscribers and events", () => {
+    const NUM_SUBSCRIBERS = 1000;
+    const EVENT_TYPES = ["EVENT_1", "EVENT_2", "EVENT_3"];
+    const EXPECTED_CALLS_PER_SUBSCRIBER = EVENT_TYPES.length;
+    const subscribers = [];
+  
+    for (let i = 0; i < NUM_SUBSCRIBERS; i++) {
+      const subscriber: ISubscriber = {
+        getName: vi.fn(() => `Subscriber${i}`),
+        handleEvent: vi.fn(),
+      };
+      subscribers.push(subscriber);
+  
+      EVENT_TYPES.forEach(eventType => eventBus.subscribe(eventType, subscriber));
+    }
+  
+    EVENT_TYPES.forEach(eventType => {
+      eventBus.publish({ type: eventType, payload: {} });
+    });
+  
+    subscribers.forEach(subscriber => {
+      expect(subscriber.handleEvent).toHaveBeenCalledTimes(EXPECTED_CALLS_PER_SUBSCRIBER);
+    });
+  });
 
   it("handles malformed events or invalid event types", () => {});
 
