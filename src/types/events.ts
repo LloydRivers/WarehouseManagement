@@ -1,8 +1,15 @@
 // src/types/events.ts
 
+export interface OrderProduct {
+  productId: string;
+  quantity: number;
+}
+
 export interface IEvent {
   type: string;
-  payload: unknown;
+  payload: {
+    products: OrderProduct[];
+  };
 }
 
 export interface CustomerOrderCreatedEvent extends IEvent {
