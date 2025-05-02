@@ -226,15 +226,47 @@ describe("EventBus", () => {
     });
   });
 
-  it("handles malformed events or invalid event types", () => {});
+  it("handles case sensitivity in event type strings", () => {
+    const subscriber: ISubscriber = {
+      getName: vi.fn(() => "Subscriber1"),
+      handleEvent: vi.fn(),
+    };
+  
+    eventBus.subscribe("EVENT_TYPE", subscriber);
+    
+    eventBus.publish({ type: "EVENT_TYPE", payload: {} });  
+    eventBus.publish({ type: "event_type", payload: {} });  
+  
+    expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);
+  });
 
-  it("handles case sensitivity in event type strings", () => {});
+  it("cleans up subscriber arrays to avoid memory leaks", () => {
+    const subscriber: ISubscriber = {
+      getName: vi.fn(() => "Subscriber1"),
+      handleEvent: vi.fn(),
+    };
+  
+    eventBus.subscribe("EVENT_TYPE", subscriber);
+    
+    eventBus.publish({ type: "EVENT_TYPE", payload: {} });
+    expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);
+  
+    eventBus.unsubscribe("EVENT_TYPE", subscriber);
+  
+    eventBus.publish({ type: "EVENT_TYPE", payload: {} });
+    expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);  
+  });
 
-  it("cleans up subscriber arrays to avoid memory leaks", () => {});
-
-  it("handles special characters in event type names", () => {});
-
-  it("handles null or undefined values passed as parameters", () => {});
-
-  it("handles circular dependencies between subscribers", () => {});
+  it("handles special characters in event type names", () => {
+    const subscriber: ISubscriber = {
+      getName: vi.fn(() => "Subscriber1"),
+      handleEvent: vi.fn(),
+    };
+  
+    eventBus.subscribe("SPECIAL_EVENT@123", subscriber);
+  
+    eventBus.publish({ type: "SPECIAL_EVENT@123", payload: {} });
+  
+    expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);
+  });
 });
