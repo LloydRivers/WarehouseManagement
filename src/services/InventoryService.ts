@@ -21,7 +21,6 @@ export class InventoryService implements ISubscriber {
       const { products } = event.payload;
       products.forEach(({ productId, quantity }) => {
         const product = this.inventoryRepository.getById(productId);
-        console.log(typeof productId, quantity); // logs 2 1
         if (!product) {
           this.logger.error(`Product ${productId} not found`);
           return;

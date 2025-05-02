@@ -30,7 +30,6 @@ export class CustomerService {
       type: "CustomerOrderCreated",
       payload: {
         products: order.products.map(({ productId, quantity }) => ({
-          // we know this is product-001
           productId,
           quantity,
         })),
