@@ -47,14 +47,23 @@ export abstract class Product {
     return this.suppliers;
   }
 
-  updateStock(amount: number): void {
-    // TODO: When the event bus is in, if the stock goes lower than the minimum threshold, we need to send a reorder event or something similar.
-    const newStock = this.currentStock + amount;
+  reduceStock(amount: number): void {
+    const newStock = this.currentStock - amount;
     if (newStock < 0) {
       throw new DomainError("Stock cannot be negative");
     }
     this.currentStock = newStock;
   }
+  /*
+  replenishStock(amount: number): void {
+    const newStock = this.currentStock + amount;
+    if (newStock < 0) {
+        throw new DomainError("Stock cannot be negative");
+    }
+    this.currentStock = newStock;
+}
+
+  */
 
   applyDiscount(discountPercentage: number): void {
     if (discountPercentage < 0 || discountPercentage > 100) {

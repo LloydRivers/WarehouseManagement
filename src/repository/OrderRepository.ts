@@ -9,7 +9,6 @@ export class OrderRepository {
   }
 
   getByCustomerId(customerId: string): CustomerOrder[] {
-    console.log("Fetching orders for customer ID:", customerId);
     return this.orders.filter((order) => order.customerId === customerId);
   }
 
