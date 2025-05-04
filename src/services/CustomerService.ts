@@ -4,9 +4,6 @@ import { CustomerRepository } from "../repository/CustomerRepository";
 import { OrderRepository } from "../repository/OrderRepository";
 import { CustomerOrder } from "../types/";
 import { DomainError } from "../utils/Error";
-// So, lets just say we did use the ebent bus at this point to publish an event
-// this.eventBus.publish("order.placed", order);
-// What would be listening for this event?
 // 1. InventoryService
 // 2. NotificationService
 // 3. PaymentService
