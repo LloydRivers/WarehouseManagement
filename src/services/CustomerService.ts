@@ -22,6 +22,10 @@ export class CustomerService {
   ) {}
 
   placeOrder(customerId: string, order: CustomerOrder): void {
+    if (!customerId) throw new DomainError("Customer ID is required");
+    if (!order || !order.products || order.products.length === 0) {
+      throw new DomainError("Order must contain at least one product");
+    }
     const customer = this.customerRepository.getById(customerId);
     if (!customer) throw new DomainError("Customer not found");
 

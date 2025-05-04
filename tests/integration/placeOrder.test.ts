@@ -47,6 +47,39 @@ describe("E2E: placeOrder flow", () => {
 
     eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
   });
+  it("throws an error if no customer id", () => {
+    const orderId: string = "1";
+    const orderData: CustomerOrder = {
+      customerId: "",
+      id: orderId,
+      orderDate: new Date().toISOString(),
+      products: [
+        {
+          productId: "product-001",
+          quantity: 2,
+          unitPrice: 10,
+        },
+      ],
+    };
+
+    expect(() => customerService.placeOrder("", orderData)).toThrow(
+      "Customer ID is required"
+    );
+  });
+  it("throws an error if no no product", () => {
+    const orderId: string = "1";
+    const customerId: string = "1";
+    const orderData: CustomerOrder = {
+      customerId,
+      id: orderId,
+      orderDate: new Date().toISOString(),
+      products: [],
+    };
+
+    expect(() => customerService.placeOrder(customerId, orderData)).toThrow(
+      "Order must contain at least one product"
+    );
+  });
   it("persists the order", () => {
     const orderId: string = "1";
     const customerId: string = "1";
