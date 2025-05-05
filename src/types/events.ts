@@ -17,7 +17,7 @@ export interface CustomerOrderCreatedEvent extends IEvent {
   payload: {
     customerId: string;
     orderId: string;
-    products: { productId: string; quantity: number }[];
+    products: OrderProduct[];
   };
 }
 
