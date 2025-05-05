@@ -47,7 +47,7 @@ const inventoryService = new InventoryService(
   eventBus
 );
 eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
-// We place the order
+// We place the order and purposefully go lower tgan the min threshold (which is 10). The order can obvouslt proceed because we have 50 in stock, but sicne we have go lower than the min threshold, we need to reorder stock
 customerService.placeOrder("1", {
   customerId: "1",
   id: "1",
@@ -55,12 +55,12 @@ customerService.placeOrder("1", {
   products: [
     {
       productId: "product-001",
-      quantity: 2,
+      quantity: 30,
       unitPrice: 10,
     },
     {
       productId: "product-001",
-      quantity: 1,
+      quantity: 15,
       unitPrice: 20,
     },
   ],
