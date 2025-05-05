@@ -14,13 +14,47 @@ import { InMemoryProductDataSource } from "./loader/InMemoryProductDataSource";
 import { InventoryRepository } from "./repository/InventoryRepository";
 
 /*
-EventBus
+EventBus subscibes to events.
+eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
   ↓
 CustomerOrderCreated
+customerService.placeOrder("1", {});
+  ↓
+  Saves the order to the order repository
+  this.orderRepository.save(order);
+  Then it publishes the event to the event bus
+   this.eventBus.publish({type: "CustomerOrderCreated"}
   ↓
 InventoryService (subscribed to event)
+handleEvent(event: IEvent): void {
+    if (event.type === "CustomerOrderCreated") {
+      this.processOrderCreatedEvent(event);
+    } else {
+      this.logger.error(`Event type ${event.type} not handled`);
+    }
+  }
+    It does checks if the product is in stock and if the order can go through
+    If the order can go through but it takes the stock below the minimum threshold, we need to reorder stock.
+
+    calls tp upsate the inventory
+     product.reduceStock(quantity);
+    this.inventoryRepository.update(product);
   ↓
 InventoryRepository (injectable)
+Incentry is updated
+update(product: Product): void {
+    const products = this.dataSource.loadProducts();
+    const existingProduct = products.find(
+      (existing) => existing.getId() === product.getId()
+    );
+    if (!existingProduct) {
+      throw new Error("Cannot update non-existent product");
+    }
+    // Update the product in the data source
+    const index = products.indexOf(existingProduct);
+    products[index] = product;
+    // this.dataSource.saveProducts(products);
+  }
   ↓
 InMemoryProductDataSource (currently faking DB)
 
