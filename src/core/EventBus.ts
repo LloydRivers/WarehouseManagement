@@ -43,7 +43,9 @@ export class EventBus {
    */
   subscribe(eventType: string, subscriber: ISubscriber): void {
     if (!eventType || !subscriber) {
-      this.logger.error("[EventBus] Cannot subscribe with null/undefined eventType or subscriber");
+      this.logger.error(
+        "[EventBus] Cannot subscribe with null/undefined eventType or subscriber"
+      );
       throw new Error("EventType and subscriber must be provided");
     }
 
@@ -82,7 +84,9 @@ export class EventBus {
    */
   unsubscribe(eventType: string, subscriber: ISubscriber): boolean {
     if (!eventType || !subscriber) {
-      this.logger.error("[EventBus] Cannot unsubscribe with null/undefined eventType or subscriber");
+      this.logger.error(
+        "[EventBus] Cannot unsubscribe with null/undefined eventType or subscriber"
+      );
       return false;
     }
 
@@ -128,7 +132,9 @@ export class EventBus {
    */
   unsubscribeFromAll(subscriber: ISubscriber): number {
     if (!subscriber) {
-      this.logger.error("[EventBus] Cannot unsubscribe a null/undefined subscriber from all events");
+      this.logger.error(
+        "[EventBus] Cannot unsubscribe a null/undefined subscriber from all events"
+      );
       return 0;
     }
 
@@ -168,7 +174,9 @@ export class EventBus {
    */
   publish(event: IEvent): void {
     if (!event || !event.type) {
-      this.logger.error("[EventBus] Cannot publish null/undefined event or event without type");
+      this.logger.error(
+        "[EventBus] Cannot publish null/undefined event or event without type"
+      );
       throw new Error("Valid event with type must be provided");
     }
 
