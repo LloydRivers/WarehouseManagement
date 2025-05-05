@@ -58,7 +58,12 @@ describe("EventBus", () => {
       "[EventBus] TestSubscriber is already subscribed to TEST_EVENT"
     );
 
-    eventBus.publish({ type: "TEST_EVENT", payload: {} });
+    eventBus.publish({
+      type: "TEST_EVENT",
+      payload: {
+        products: [{ productId: "1", quantity: 10 }],
+      },
+    });
     expect(mockLogger.info).toHaveBeenCalledWith(
       "[EventBus] Publishing event: TEST_EVENT"
     );
@@ -68,7 +73,12 @@ describe("EventBus", () => {
   });
 
   it("publishes events with no subscribers", () => {
-    eventBus.publish({ type: "NO_SUBSCRIBERS_EVENT", payload: {} });
+    eventBus.publish({
+      type: "NO_SUBSCRIBERS_EVENT",
+      payload: {
+        products: [{ productId: "1", quantity: 10 }],
+      },
+    });
     expect(mockLogger.info).toHaveBeenCalledWith(
       "[EventBus] Publishing event: NO_SUBSCRIBERS_EVENT"
     );
@@ -86,7 +96,12 @@ describe("EventBus", () => {
     };
     eventBus.subscribe("FAIL_EVENT", failingSubscriber);
     try {
-      eventBus.publish({ type: "FAIL_EVENT", payload: {} });
+      eventBus.publish({
+        type: "FAIL_EVENT",
+        payload: {
+          products: [{ productId: "1", quantity: 10 }],
+        },
+      });
     } catch (error) {
       expect(mockLogger.error).toHaveBeenCalledWith(
         "[EventBus] Error notifying FailingSubscriber about FAIL_EVENT: Failed to handle event"
@@ -138,10 +153,10 @@ describe("EventBus", () => {
       getName: vi.fn(() => "SoloSubscriber"),
       handleEvent: vi.fn(),
     };
-  
+
     eventBus.subscribe("SINGLE_EVENT", subscriber);
     const result = eventBus.unsubscribe("SINGLE_EVENT", subscriber);
-  
+
     expect(result).toBe(true);
     expect(mockLogger.info).toHaveBeenCalledWith(
       "[EventBus] Attempting to unsubscribe SoloSubscriber from SINGLE_EVENT"
@@ -160,22 +175,25 @@ describe("EventBus", () => {
       getName: vi.fn(() => "SubscriberOne"),
       handleEvent: vi.fn(),
     };
-  
+
     const subscriberTwo: ISubscriber = {
       getName: vi.fn(() => "SubscriberTwo"),
       handleEvent: vi.fn(),
     };
-  
-   
+
     eventBus.subscribe("SHARED_EVENT", subscriberOne);
     eventBus.subscribe("SHARED_EVENT", subscriberTwo);
-  
-    eventBus.publish({ type: "SHARED_EVENT", payload: {} });
 
+    eventBus.publish({
+      type: "SHARED_EVENT",
+      payload: {
+        products: [{ productId: "1", quantity: 10 }],
+      },
+    });
 
     expect(subscriberOne.handleEvent).toHaveBeenCalledTimes(1);
     expect(subscriberTwo.handleEvent).toHaveBeenCalledTimes(1);
-  
+
     expect(mockLogger.info).toHaveBeenCalledWith(
       "[EventBus] Notifying SubscriberOne about SHARED_EVENT"
     );
@@ -189,16 +207,36 @@ describe("EventBus", () => {
       getName: vi.fn(() => "MultiEventSubscriber"),
       handleEvent: vi.fn(),
     };
-  
+
     eventBus.subscribe("EVENT_A", subscriber);
     eventBus.subscribe("EVENT_B", subscriber);
-  
-    eventBus.publish({ type: "EVENT_A", payload: {} });
-    eventBus.publish({ type: "EVENT_B", payload: {} });
-  
+
+    eventBus.publish({
+      type: "EVENT_A",
+      payload: {
+        products: [{ productId: "1", quantity: 10 }],
+      },
+    });
+    eventBus.publish({
+      type: "EVENT_B",
+      payload: {
+        products: [{ productId: "1", quantity: 10 }],
+      },
+    });
+
     expect(subscriber.handleEvent).toHaveBeenCalledTimes(2);
-    expect(subscriber.handleEvent).toHaveBeenCalledWith({ type: "EVENT_A", payload: {} });
-    expect(subscriber.handleEvent).toHaveBeenCalledWith({ type: "EVENT_B", payload: {} });
+    expect(subscriber.handleEvent).toHaveBeenCalledWith({
+      type: "EVENT_A",
+      payload: {
+        products: [{ productId: "1", quantity: 10 }],
+      },
+    });
+    expect(subscriber.handleEvent).toHaveBeenCalledWith({
+      type: "EVENT_B",
+      payload: {
+        products: [{ productId: "1", quantity: 10 }],
+      },
+    });
   });
 
   it("tests performance with a large number of subscribers and events", () => {
@@ -206,23 +244,32 @@ describe("EventBus", () => {
     const EVENT_TYPES = ["EVENT_1", "EVENT_2", "EVENT_3"];
     const EXPECTED_CALLS_PER_SUBSCRIBER = EVENT_TYPES.length;
     const subscribers = [];
-  
+
     for (let i = 0; i < NUM_SUBSCRIBERS; i++) {
       const subscriber: ISubscriber = {
         getName: vi.fn(() => `Subscriber${i}`),
         handleEvent: vi.fn(),
       };
       subscribers.push(subscriber);
-  
-      EVENT_TYPES.forEach(eventType => eventBus.subscribe(eventType, subscriber));
+
+      EVENT_TYPES.forEach((eventType) =>
+        eventBus.subscribe(eventType, subscriber)
+      );
     }
-  
-    EVENT_TYPES.forEach(eventType => {
-      eventBus.publish({ type: eventType, payload: {} });
+
+    EVENT_TYPES.forEach((eventType) => {
+      eventBus.publish({
+        type: eventType,
+        payload: {
+          products: [{ productId: "1", quantity: 10 }],
+        },
+      });
     });
-  
-    subscribers.forEach(subscriber => {
-      expect(subscriber.handleEvent).toHaveBeenCalledTimes(EXPECTED_CALLS_PER_SUBSCRIBER);
+
+    subscribers.forEach((subscriber) => {
+      expect(subscriber.handleEvent).toHaveBeenCalledTimes(
+        EXPECTED_CALLS_PER_SUBSCRIBER
+      );
     });
   });
 
@@ -231,12 +278,22 @@ describe("EventBus", () => {
       getName: vi.fn(() => "Subscriber1"),
       handleEvent: vi.fn(),
     };
-  
+
     eventBus.subscribe("EVENT_TYPE", subscriber);
-    
-    eventBus.publish({ type: "EVENT_TYPE", payload: {} });  
-    eventBus.publish({ type: "event_type", payload: {} });  
-  
+
+    eventBus.publish({
+      type: "EVENT_TYPE",
+      payload: {
+        products: [{ productId: "1", quantity: 10 }],
+      },
+    });
+    eventBus.publish({
+      type: "event_type",
+      payload: {
+        products: [{ productId: "1", quantity: 10 }],
+      },
+    });
+
     expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);
   });
 
@@ -245,16 +302,26 @@ describe("EventBus", () => {
       getName: vi.fn(() => "Subscriber1"),
       handleEvent: vi.fn(),
     };
-  
+
     eventBus.subscribe("EVENT_TYPE", subscriber);
-    
-    eventBus.publish({ type: "EVENT_TYPE", payload: {} });
+
+    eventBus.publish({
+      type: "EVENT_TYPE",
+      payload: {
+        products: [{ productId: "1", quantity: 10 }],
+      },
+    });
     expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);
-  
+
     eventBus.unsubscribe("EVENT_TYPE", subscriber);
-  
-    eventBus.publish({ type: "EVENT_TYPE", payload: {} });
-    expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);  
+
+    eventBus.publish({
+      type: "EVENT_TYPE",
+      payload: {
+        products: [{ productId: "1", quantity: 10 }],
+      },
+    });
+    expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);
   });
 
   it("handles special characters in event type names", () => {
@@ -262,11 +329,16 @@ describe("EventBus", () => {
       getName: vi.fn(() => "Subscriber1"),
       handleEvent: vi.fn(),
     };
-  
+
     eventBus.subscribe("SPECIAL_EVENT@123", subscriber);
-  
-    eventBus.publish({ type: "SPECIAL_EVENT@123", payload: {} });
-  
+
+    eventBus.publish({
+      type: "SPECIAL_EVENT@123",
+      payload: {
+        products: [{ productId: "1", quantity: 10 }],
+      },
+    });
+
     expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);
   });
 });
