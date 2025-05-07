@@ -1,6 +1,5 @@
 // index.ts
 import { ConcreteMix } from "./models/inventory/ConcreteMix";
-import { Supplier } from "./models/Supplier/Supplier";
 import { Customer } from "./models/Customer/Customer";
 import { InMemoryCustomerDataSource } from "./loader/InMemoryCustomerDataSource";
 import { CustomerRepository } from "./repository/CustomerRepository";
@@ -12,6 +11,7 @@ import { InventoryService } from "./services/InventoryService";
 import { EVENT_TYPES } from "./types/events";
 import { InMemoryProductDataSource } from "./loader/InMemoryProductDataSource";
 import { InventoryRepository } from "./repository/InventoryRepository";
+import { SupplierService } from "./services/SupplierService";
 
 /*
 EventBus subscibes to events.
@@ -76,11 +76,14 @@ const customerService = new CustomerService(
 );
 const inventoryRepository = new InventoryRepository(inventoryDataSource);
 const inventoryService = new InventoryService(
-  new ConsoleLogger(),
+  logger,
   inventoryRepository,
   eventBus
 );
+
+const supplierService = new SupplierService(logger);
 eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
+eventBus.subscribe(EVENT_TYPES.REORDER_STOCK, supplierService);
 // We place the order and purposefully go lower tgan the min threshold (which is 10). The order can obvouslt proceed because we have 50 in stock, but sicne we have go lower than the min threshold, we need to reorder stock
 customerService.placeOrder("1", {
   customerId: "1",
@@ -89,14 +92,14 @@ customerService.placeOrder("1", {
   products: [
     {
       productId: "product-001",
-      quantity: 30,
+      quantity: 45,
       unitPrice: 10,
     },
-    {
-      productId: "product-001",
-      quantity: 15,
-      unitPrice: 20,
-    },
+    // {
+    //   productId: "product-001",
+    //   quantity: 15,
+    //   unitPrice: 20,
+    // },
   ],
 });
 
