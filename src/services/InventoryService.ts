@@ -29,6 +29,7 @@ export class InventoryService implements ISubscriber {
 
     products.forEach(({ productId, quantity }) => {
       const product = this.inventoryRepository.getById(productId);
+      
       // We have a few if statements here, and there is the potential for more
       if (!product) {
         throw new DomainError(`Product ${productId} not found`);
@@ -47,8 +48,13 @@ export class InventoryService implements ISubscriber {
         product.getMinimumStockThreshold()
       ) {
         this.logger.warn(
-          `Stock for product ${productId} is below minimum threshold. Current stock: ${product.getCurrentStock()}, Minimum threshold: ${product.getMinimumStockThreshold()}`
+          `Stock warning for product ${productId}:\n` +
+            `  - Initial stock: ${product.getCurrentStock()}\n` +
+            `  - Quantity ordered: ${quantity}\n` +
+            `  - Final stock: ${product.getCurrentStock() - quantity}\n` +
+            `  - Minimum threshold: ${product.getMinimumStockThreshold()}`
         );
+
         /*
         TODO: This is where we would send an event to a supplier service or a stock service. 
         
