@@ -11,6 +11,7 @@ export abstract class Product {
     private readonly category: string,
     private basePrice: number,
     private currentStock: number,
+    private maximumStockLevel: number,
     private minimumStockThreshold: number,
     private suppliers: Array<{ supplier: Supplier; price: number }>
   ) {}
@@ -39,6 +40,10 @@ export abstract class Product {
     return this.currentStock;
   }
 
+  getMaximumStockLevel(): number {
+    return this.maximumStockLevel;
+  }
+
   getMinimumStockThreshold(): number {
     return this.minimumStockThreshold;
   }
@@ -54,16 +59,9 @@ export abstract class Product {
     }
     this.currentStock = newStock;
   }
-  /*
-  replenishStock(amount: number): void {
-    const newStock = this.currentStock + amount;
-    if (newStock < 0) {
-        throw new DomainError("Stock cannot be negative");
-    }
-    this.currentStock = newStock;
-}
-
-  */
+  replenishToFullStock(): void {
+    this.currentStock = this.maximumStockLevel;
+  }
 
   applyDiscount(discountPercentage: number): void {
     if (discountPercentage < 0 || discountPercentage > 100) {

@@ -8,7 +8,7 @@ import { IEvent } from "../types/events";
 export class InventoryService implements ISubscriber {
   constructor(
     private logger: ConsoleLogger,
-    private inventoryRepository: InventoryRepository, // Injected: InventoryRepo
+    private inventoryRepository: InventoryRepository,
     private eventBus: EventBus // Injected: EventBus
   ) {}
 
@@ -29,62 +29,45 @@ export class InventoryService implements ISubscriber {
 
     products.forEach(({ productId, quantity }) => {
       const product = this.inventoryRepository.getById(productId);
-      
-      // We have a few if statements here, and there is the potential for more
+
       if (!product) {
         throw new DomainError(`Product ${productId} not found`);
       }
-      // Could this be grounds for the strategy pattern?
       if (product.getCurrentStock() < quantity) {
         throw new DomainError(
           `Not enough stock for product ${productId}. Available: ${product.getCurrentStock()}, Required: ${quantity}`
         );
       }
 
-      // Here we could check if the order can go through but it takes the stock below the minimum threshold, we need to potential send an event to a supplier service or a stock service
+      product.reduceStock(quantity);
+      this.inventoryRepository.update(product);
 
-      if (
-        product.getCurrentStock() - quantity <
-        product.getMinimumStockThreshold()
-      ) {
+      if (product.getCurrentStock() < product.getMinimumStockThreshold()) {
+        const reorderQty =
+          product.getMaximumStockLevel() - product.getCurrentStock();
+
         this.logger.warn(
           `Stock warning for product ${productId}:\n` +
-            `  - Initial stock: ${product.getCurrentStock()}\n` +
-            `  - Quantity ordered: ${quantity}\n` +
-            `  - Final stock: ${product.getCurrentStock() - quantity}\n` +
+            `  - Final stock: ${product.getCurrentStock()}\n` +
             `  - Minimum threshold: ${product.getMinimumStockThreshold()}`
         );
 
-        /*
-        TODO: This is where we would send an event to a supplier service or a stock service. 
-        
-        Issue to research: Either make the event bus class generic or the publish method generic.
-
-        Reasons: Typescript is always expecting an event of type IEvent, but we want to send different event types, whilst also not breaking all the types in the test file.
-        */
         this.eventBus.publish({
           type: "ReorderStock",
           payload: {
             products: [
               {
                 productId,
-                quantity:
-                  product.getMinimumStockThreshold() -
-                  (product.getCurrentStock() - quantity),
+                quantity: reorderQty,
               },
             ],
           },
         });
+
         this.logger.info(
-          `Reorder event published for product ${productId}. Quantity to reorder: ${
-            product.getMinimumStockThreshold() -
-            (product.getCurrentStock() - quantity)
-          }`
+          `Reorder event published for product ${productId}. Quantity to reorder: ${reorderQty}`
         );
       }
-
-      product.reduceStock(quantity);
-      this.inventoryRepository.update(product);
     });
 
     this.logger.info(`Handled event: ${event.type}`);

@@ -52,7 +52,7 @@ describe("E2E: placeOrder flow", () => {
       eventBus
     );
 
-    supplierService = new SupplierService(mockLogger);
+    supplierService = new SupplierService(mockLogger, inventoryRepository);
 
     eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
 
@@ -215,21 +215,35 @@ describe("E2E: placeOrder flow", () => {
         },
       ],
     };
+    const publishSpy = vi.spyOn(eventBus, "publish");
+    const calls = publishSpy.mock.calls;
+    customerService.placeOrder(customerId, orderData);
+    expect(calls[0][0]).toEqual({
+      type: EVENT_TYPES.CUSTOMER_ORDER_CREATED,
+      payload: {
+        products: [
+          {
+            productId: "product-001",
+            quantity: 45,
+          },
+        ],
+      },
+    });
+    expect(calls[1][0]).toEqual({
+      type: EVENT_TYPES.REORDER_STOCK,
+      payload: {
+        products: [
+          {
+            productId: "product-001",
+            quantity: 45,
+          },
+        ],
+      },
+    });
+    expect(publishSpy).toHaveBeenCalledTimes(2);
 
-    customerService.placeOrder(orderId, orderData);
     const product = inventoryRepository.getById("product-001");
     expect(product).toBeDefined();
-    expect(product!.getCurrentStock()).toBe(5);
-    /*
-    Looking at the logic, we would expect the logger.warn to be called with the message: Stock for product product-001 is below minimum threshold. Current stock: 5, Minimum threshold: 10 so lets write an expect for that.
-    */
-
-    expect(mockLogger.warn).toHaveBeenCalledWith(
-      `Stock warning for product product-001:
-  - Initial stock: 50
-  - Quantity ordered: 45
-  - Final stock: 5
-  - Minimum threshold: 10`
-    );
+    expect(product!.getCurrentStock()).toBe(50);
   });
 });

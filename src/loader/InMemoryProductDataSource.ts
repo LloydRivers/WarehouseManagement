@@ -14,7 +14,8 @@ export class InMemoryProductDataSource implements IProductDataSource {
       "High-quality concrete mix",
       "RAW_MATERIAL",
       100, // base price
-      50, // stock
+      50, // current stock
+      50, // max stock level
       10, // min stock threshold
       [{ supplier: suppliers[0], price: 120 }]
     ),

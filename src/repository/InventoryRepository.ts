@@ -15,6 +15,14 @@ export class InventoryRepository {
 
   // Needs the update method to be implemented.
   update(product: Product): void {
+    console.log("last stop of the product");
+    console.log("last stop of the product");
+    console.log("last stop of the product");
+    console.log(product);
+    console.log("last stop of the product");
+    console.log("last stop of the product");
+    console.log("last stop of the product");
+    console.log("last stop of the product");
     const products = this.dataSource.loadProducts();
     const existingProduct = products.find(
       (existing) => existing.getId() === product.getId()

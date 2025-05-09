@@ -34,14 +34,14 @@ handleEvent(event: IEvent): void {
     }
   }
     It does checks if the product is in stock and if the order can go through
-    If the order can go through but it takes the stock below the minimum threshold, we need to reorder stock.
+    If the order can go through BUT it takes the stock below the minimum threshold, we need to reorder stock.
 
-    calls tp upsate the inventory
+    calls tp update the inventory
      product.reduceStock(quantity);
     this.inventoryRepository.update(product);
   ↓
-InventoryRepository (injectable)
-Incentry is updated
+InventoryRepository
+Inventory is updated
 update(product: Product): void {
     const products = this.dataSource.loadProducts();
     const existingProduct = products.find(
@@ -81,7 +81,7 @@ const inventoryService = new InventoryService(
   eventBus
 );
 
-const supplierService = new SupplierService(logger);
+const supplierService = new SupplierService(logger, inventoryRepository);
 eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
 eventBus.subscribe(EVENT_TYPES.REORDER_STOCK, supplierService);
 // We place the order and purposefully go lower tgan the min threshold (which is 10). The order can obvouslt proceed because we have 50 in stock, but sicne we have go lower than the min threshold, we need to reorder stock
