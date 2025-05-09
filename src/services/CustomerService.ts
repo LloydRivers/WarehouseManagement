@@ -4,14 +4,11 @@ import { CustomerRepository } from "../repository/CustomerRepository";
 import { OrderRepository } from "../repository/OrderRepository";
 import { CustomerOrder } from "../types/";
 import { DomainError } from "../utils/Error";
-// 1. InventoryService
-// 2. NotificationService
-// 3. PaymentService
-// 4. ShippingService
-// 5. AnalyticsService
-// CustomerOrderCreatedEvent
 
 export class CustomerService {
+  /**
+   * Constructor using dependency injection pattern.
+   */
   constructor(
     private customerRepository: CustomerRepository,
     private orderRepository: OrderRepository,
@@ -19,14 +16,15 @@ export class CustomerService {
   ) {}
 
   placeOrder(customerId: string, order: CustomerOrder): void {
-    if (!customerId) throw new DomainError("Customer ID is required");
-    if (!order || !order.products || order.products.length === 0) {
-      throw new DomainError("Order must contain at least one product");
-    }
+    this.validateOrder(customerId, order);
     const customer = this.customerRepository.getById(customerId);
     if (!customer) throw new DomainError("Customer not found");
 
     this.orderRepository.save(order);
+    /**
+     * Handles order creation and publishes a corresponding event.
+     * Utilizes the Observer pattern to decouple event handling via the event bus.
+     */
     this.eventBus.publish({
       type: "CustomerOrderCreated",
       payload: {
@@ -36,5 +34,19 @@ export class CustomerService {
         })),
       },
     });
+  }
+
+  /**
+   * Validates order input parameters.
+   * Example of Separation of Concerns pattern - extracting validation logic.
+   */
+  private validateOrder(customerId: string, order: CustomerOrder): void {
+    if (!customerId) {
+      throw new DomainError("Customer ID is required");
+    }
+
+    if (!order || !order.products || order.products.length === 0) {
+      throw new DomainError("Order must contain at least one product");
+    }
   }
 }

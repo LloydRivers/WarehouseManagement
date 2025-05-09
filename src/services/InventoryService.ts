@@ -6,10 +6,13 @@ import { ISubscriber } from "../types/subscriber";
 import { IEvent } from "../types/events";
 
 export class InventoryService implements ISubscriber {
+  /**
+   * Constructor using dependency injection pattern.
+   */
   constructor(
     private logger: ConsoleLogger,
     private inventoryRepository: InventoryRepository,
-    private eventBus: EventBus // Injected: EventBus
+    private eventBus: EventBus
   ) {}
 
   getName(): string {
@@ -28,17 +31,7 @@ export class InventoryService implements ISubscriber {
     const { products } = event.payload;
 
     products.forEach(({ productId, quantity }) => {
-      const product = this.inventoryRepository.getById(productId);
-
-      if (!product) {
-        throw new DomainError(`Product ${productId} not found`);
-      }
-      if (product.getCurrentStock() < quantity) {
-        throw new DomainError(
-          `Not enough stock for product ${productId}. Available: ${product.getCurrentStock()}, Required: ${quantity}`
-        );
-      }
-
+      const product = this.validateProduct(productId, quantity);
       product.reduceStock(quantity);
       this.inventoryRepository.update(product);
 
@@ -52,6 +45,10 @@ export class InventoryService implements ISubscriber {
             `  - Minimum threshold: ${product.getMinimumStockThreshold()}`
         );
 
+        /**
+         * Publishes a reorder stock event to the event bus.
+         * Allows other components to react to stock levels without direct dependencies.
+         */
         this.eventBus.publish({
           type: "ReorderStock",
           payload: {
@@ -70,10 +67,25 @@ export class InventoryService implements ISubscriber {
       }
     });
 
-    this.logger.info(`Handled event: ${event.type}`);
-    this.logger.info(`Event payload: ${JSON.stringify(event.payload)}`);
-    this.logger.info(`Event handled by: ${this.getName()}`);
-    this.logger.info(`Event handled at: ${new Date().toISOString()}`);
     this.logger.info(`Event handled successfully`);
+  }
+
+  /**
+   * Validates product input parameters.
+   * Example of Separation of Concerns pattern - extracting validation logic.
+   */
+  private validateProduct(productId: string, quantity: number) {
+    const product = this.inventoryRepository.getById(productId);
+    if (!product) {
+      throw new DomainError(`Product ${productId} not found`);
+    }
+
+    if (product.getCurrentStock() < quantity) {
+      throw new DomainError(
+        `Not enough stock for product ${productId}. Available: ${product.getCurrentStock()}, Required: ${quantity}`
+      );
+    }
+
+    return product;
   }
 }
