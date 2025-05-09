@@ -16,7 +16,6 @@ export class OrderRepository {
     const index = this.orders.findIndex(({ id }) => id === order.id);
     if (index !== -1) {
       this.orders[index] = order;
-      console.log("Order updated:", order);
     }
   }
 }
