@@ -21,10 +21,14 @@ export class CustomerService {
     if (!customer) throw new DomainError("Customer not found");
 
     this.orderRepository.save(order);
-    /**
-     * Handles order creation and publishes a corresponding event.
-     * Utilizes the Observer pattern to decouple event handling via the event bus.
-     */
+    this.publishCustomerOrderCreatedEvent(order);
+  }
+
+  /**
+   * Publishes a 'CustomerOrderCreated' event to the event bus.
+   * Example of the Observer pattern to decouple event handling.
+   */
+  private publishCustomerOrderCreatedEvent(order: CustomerOrder): void {
     this.eventBus.publish({
       type: "CustomerOrderCreated",
       payload: {

@@ -27,6 +27,7 @@ export class InventoryService implements ISubscriber {
     }
   }
 
+
   private processOrderCreatedEvent(event: IEvent): void {
     const { products } = event.payload;
 
@@ -45,29 +46,36 @@ export class InventoryService implements ISubscriber {
             `  - Minimum threshold: ${product.getMinimumStockThreshold()}`
         );
 
-        /**
-         * Publishes a reorder stock event to the event bus.
-         * Allows other components to react to stock levels without direct dependencies.
-         */
-        this.eventBus.publish({
-          type: "ReorderStock",
-          payload: {
-            products: [
-              {
-                productId,
-                quantity: reorderQty,
-              },
-            ],
-          },
-        });
-
-        this.logger.info(
-          `Reorder event published for product ${productId}. Quantity to reorder: ${reorderQty}`
-        );
+        this.publishReorderStockEvent(productId, reorderQty);
       }
     });
 
     this.logger.info(`Event handled successfully`);
+  }
+
+  /**
+   * Publishes a 'ReorderStock' event to the event bus.
+   * Decouples the logic for publishing stock reorder events.
+   */
+  private publishReorderStockEvent(
+    productId: string,
+    reorderQty: number
+  ): void {
+    this.eventBus.publish({
+      type: "ReorderStock",
+      payload: {
+        products: [
+          {
+            productId,
+            quantity: reorderQty,
+          },
+        ],
+      },
+    });
+
+    this.logger.info(
+      `Reorder event published for product ${productId}. Quantity to reorder: ${reorderQty}`
+    );
   }
 
   /**
