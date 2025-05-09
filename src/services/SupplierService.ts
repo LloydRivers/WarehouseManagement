@@ -36,7 +36,7 @@ export class SupplierService {
       );
       return false;
     }
-
+    // Assignment Brief: Receive new inventory and update stock quantities.
     product.replenishToFullStock();
     this.inventoryRepository.update(product);
     return true;

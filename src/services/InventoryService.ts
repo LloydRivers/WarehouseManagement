@@ -27,7 +27,6 @@ export class InventoryService implements ISubscriber {
     }
   }
 
-
   private processOrderCreatedEvent(event: IEvent): void {
     const { products } = event.payload;
 
@@ -35,7 +34,7 @@ export class InventoryService implements ISubscriber {
       const product = this.validateProduct(productId, quantity);
       product.reduceStock(quantity);
       this.inventoryRepository.update(product);
-
+      // Assignment Brief: Monitor low stock alerts to prevent stockouts.
       if (product.getCurrentStock() < product.getMinimumStockThreshold()) {
         const reorderQty =
           product.getMaximumStockLevel() - product.getCurrentStock();

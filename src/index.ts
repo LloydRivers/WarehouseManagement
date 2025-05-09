@@ -13,53 +13,6 @@ import { InMemoryProductDataSource } from "./loader/InMemoryProductDataSource";
 import { InventoryRepository } from "./repository/InventoryRepository";
 import { SupplierService } from "./services/SupplierService";
 
-/*
-EventBus subscibes to events.
-eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
-  ↓
-CustomerOrderCreated
-customerService.placeOrder("1", {});
-  ↓
-  Saves the order to the order repository
-  this.orderRepository.save(order);
-  Then it publishes the event to the event bus
-   this.eventBus.publish({type: "CustomerOrderCreated"}
-  ↓
-InventoryService (subscribed to event)
-handleEvent(event: IEvent): void {
-    if (event.type === "CustomerOrderCreated") {
-      this.processOrderCreatedEvent(event);
-    } else {
-      this.logger.error(`Event type ${event.type} not handled`);
-    }
-  }
-    It does checks if the product is in stock and if the order can go through
-    If the order can go through BUT it takes the stock below the minimum threshold, we need to reorder stock.
-
-    calls tp update the inventory
-     product.reduceStock(quantity);
-    this.inventoryRepository.update(product);
-  ↓
-InventoryRepository
-Inventory is updated
-update(product: Product): void {
-    const products = this.dataSource.loadProducts();
-    const existingProduct = products.find(
-      (existing) => existing.getId() === product.getId()
-    );
-    if (!existingProduct) {
-      throw new Error("Cannot update non-existent product");
-    }
-    // Update the product in the data source
-    const index = products.indexOf(existingProduct);
-    products[index] = product;
-    // this.dataSource.saveProducts(products);
-  }
-  ↓
-InMemoryProductDataSource (currently faking DB)
-
-*/
-
 const logger = new ConsoleLogger();
 const eventBus = new EventBus(logger);
 
@@ -84,7 +37,8 @@ const inventoryService = new InventoryService(
 const supplierService = new SupplierService(logger, inventoryRepository);
 eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
 eventBus.subscribe(EVENT_TYPES.REORDER_STOCK, supplierService);
-// We place the order and purposefully go lower tgan the min threshold (which is 10). The order can obvouslt proceed because we have 50 in stock, but sicne we have go lower than the min threshold, we need to reorder stock
+
+// Assignment Brief: Process customer orders, and update inventory levels accordingly.
 customerService.placeOrder("1", {
   customerId: "1",
   id: "1",
@@ -95,23 +49,5 @@ customerService.placeOrder("1", {
       quantity: 45,
       unitPrice: 10,
     },
-    // {
-    //   productId: "product-001",
-    //   quantity: 15,
-    //   unitPrice: 20,
-    // },
   ],
 });
-
-/*
-What I expect to happen:
-1. A customer is created.
-2. An order is placed for the customer.
-3. The order is processed (stock is checked and potentially reordered)
-4. The inventory is updated.
-5. The customer is notified about the order status.
-6. The order is completed.
-7. The customer is notified about the order completion.
-8. The inventory is updated again.
-9. The customer is notified about the inventory update. 
-*/
