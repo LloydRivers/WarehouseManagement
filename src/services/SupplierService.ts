@@ -30,6 +30,7 @@ export class SupplierService {
     this.logger.info(`Reordering stock for product ${productId}`);
 
     const product = this.inventoryRepository.getById(productId);
+
     if (!product) {
       this.logger.error(
         `Product not found for reorder: ${productId}. Cannot replenish stock.`
