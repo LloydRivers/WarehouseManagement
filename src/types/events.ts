@@ -24,4 +24,5 @@ export interface CustomerOrderCreatedEvent extends IEvent {
 export const EVENT_TYPES = {
   CUSTOMER_ORDER_CREATED: "CustomerOrderCreated",
   REORDER_STOCK: "ReorderStock",
+  STOCK_REPLENISHED: "StockReplenished",
 } as const;

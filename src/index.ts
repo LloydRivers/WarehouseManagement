@@ -34,9 +34,15 @@ const inventoryService = new InventoryService(
   eventBus
 );
 
-const supplierService = new SupplierService(logger, inventoryRepository);
+const supplierService = new SupplierService(
+  logger,
+  inventoryRepository,
+  eventBus
+);
+// Subscribe to events
 eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
 eventBus.subscribe(EVENT_TYPES.REORDER_STOCK, supplierService);
+eventBus.subscribe(EVENT_TYPES.STOCK_REPLENISHED, inventoryService);
 
 // Assignment Brief: Process customer orders, and update inventory levels accordingly.
 customerService.placeOrder("1", {

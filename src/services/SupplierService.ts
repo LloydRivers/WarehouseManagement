@@ -3,15 +3,18 @@
 import { InventoryRepository } from "../repository/InventoryRepository";
 import { IEvent } from "../types/events";
 import { ConsoleLogger } from "../utils/Logger";
+import { EventBus } from "../core/EventBus";
 
 export class SupplierService {
-  private logger: ConsoleLogger;
-  private inventoryRepository: InventoryRepository;
-
   /**
    * Constructor using dependency injection pattern.
    */
-  constructor(logger: ConsoleLogger, inventoryRepository: InventoryRepository) {
+  constructor(
+    private logger: ConsoleLogger,
+    private inventoryRepository: InventoryRepository,
+    private eventBus: EventBus
+  ) {
+    this.eventBus = eventBus;
     this.logger = logger;
     this.inventoryRepository = inventoryRepository;
   }
@@ -40,6 +43,20 @@ export class SupplierService {
     // Assignment Brief: Receive new inventory and update stock quantities.
     product.replenishToFullStock();
     this.inventoryRepository.update(product);
+    this.eventBus.publish({
+      type: "StockReplenished",
+      payload: {
+        products: [
+          {
+            productId: product.getId(),
+            quantity:
+              product.getMaximumStockLevel() - product.getCurrentStock(),
+            unitCost: product.getBasePrice(),
+          },
+        ],
+      },
+    });
+
     return true;
   }
 }
