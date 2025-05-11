@@ -1,7 +1,7 @@
 // src/types/subscriber.ts
-import { IEvent } from "./events";
+import { EventMap, IEvent } from "./events";
 
-export interface ISubscriber {
+export interface ISubscriber<K extends keyof EventMap = keyof EventMap> {
   getName(): string;
-  handleEvent(event: IEvent): void;
+  handleEvent(event: IEvent<K>): void;
 }

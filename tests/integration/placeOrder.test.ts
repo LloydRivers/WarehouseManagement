@@ -52,7 +52,11 @@ describe("E2E: placeOrder flow", () => {
       eventBus
     );
 
-    supplierService = new SupplierService(mockLogger, inventoryRepository);
+    supplierService = new SupplierService(
+      mockLogger,
+      inventoryRepository,
+      eventBus
+    );
 
     eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
 
@@ -240,7 +244,7 @@ describe("E2E: placeOrder flow", () => {
         ],
       },
     });
-    expect(publishSpy).toHaveBeenCalledTimes(2);
+    expect(publishSpy).toHaveBeenCalledTimes(3);
 
     const product = inventoryRepository.getById("product-001");
     expect(product).toBeDefined();

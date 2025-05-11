@@ -251,14 +251,15 @@ describe("EventBus", () => {
         handleEvent: vi.fn(),
       };
       subscribers.push(subscriber);
-
       EVENT_TYPES.forEach((eventType) =>
+        // @ts-ignore
         eventBus.subscribe(eventType, subscriber)
       );
     }
 
     EVENT_TYPES.forEach((eventType) => {
       eventBus.publish({
+        // @ts-ignore
         type: eventType,
         payload: {
           products: [{ productId: "1", quantity: 10 }],
@@ -288,6 +289,7 @@ describe("EventBus", () => {
       },
     });
     eventBus.publish({
+      // @ts-ignore
       type: "event_type",
       payload: {
         products: [{ productId: "1", quantity: 10 }],
