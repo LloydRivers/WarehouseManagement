@@ -63,4 +63,6 @@ export abstract class Product {
   isBelowThreshold(): boolean {
     return this.currentStock < this.minimumStockThreshold;
   }
+
+  abstract calculateDiscountedPrice(discountRate: number): number;
 }
