@@ -1,9 +1,5 @@
 import { InventoryRepository } from "../repository/InventoryRepository";
-import {
-  IEvent,
-  IOrderItem,
-  EVENT_TYPES,
-} from "../types/events";
+import { IEvent, IOrderItem, EVENT_TYPES } from "../types/events";
 import { ConsoleLogger } from "../utils/Logger";
 
 interface FinancialReport {
@@ -28,10 +24,7 @@ export class FinancialReportService {
   private totalSales = 0;
   private totalPurchases = 0;
 
-  constructor(
-    private readonly logger: ConsoleLogger,
-    private readonly inventoryRepository: InventoryRepository
-  ) {}
+  constructor(private readonly logger: ConsoleLogger) {}
 
   getName(): string {
     return "FinancialReportService";
@@ -44,9 +37,6 @@ export class FinancialReportService {
 
     if (isCustomerOrderCreated(event)) {
       for (const item of event.payload.products) {
-        console.log("______");
-        console.log(item.unitPrice);
-        console.log("______");
         const revenue = item.quantity * item.unitPrice;
 
         this.totalSales += revenue;
@@ -61,19 +51,9 @@ export class FinancialReportService {
 
   getReport(): FinancialReport {
     return {
-      totalSales: this.totalSales, // This will become 4500
-      totalPurchases: this.totalPurchases, // This will become 4500
-      netIncome: this.totalSales - this.totalPurchases, // This will become 0
+      totalSales: this.totalSales,
+      totalPurchases: this.totalPurchases,
+      netIncome: this.totalSales - this.totalPurchases,
     };
-  }
-
-  private getProductPrice(productId: string): number {
-    const product = this.inventoryRepository.getById(productId);
-
-    if (!product) {
-      this.logger.error(`Product not found: ${productId}`);
-      return 0;
-    }
-    return product.getBasePrice();
   }
 }

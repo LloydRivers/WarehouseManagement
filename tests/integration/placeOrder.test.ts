@@ -59,10 +59,7 @@ describe("E2E: placeOrder flow", () => {
       inventoryRepository,
       eventBus
     );
-    financialReportService = new FinancialReportService(
-      mockLogger,
-      inventoryRepository
-    );
+    financialReportService = new FinancialReportService(mockLogger);
     eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
 
     eventBus.subscribe(EVENT_TYPES.REORDER_STOCK, supplierService);
