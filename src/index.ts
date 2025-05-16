@@ -43,7 +43,9 @@ const supplierService = new SupplierService(
 
 const financialReportService = new FinancialReportService(logger);
 
-// Subscribe to events
+// Register subscribers to domain events.
+// This follows the event-driven architecture pattern, enabling loose coupling between services.
+// Each service reacts to events independently, supporting scalability and separation of concerns.
 eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
 eventBus.subscribe(EVENT_TYPES.REORDER_STOCK, supplierService);
 eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, financialReportService);
