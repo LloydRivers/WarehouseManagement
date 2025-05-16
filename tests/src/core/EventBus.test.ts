@@ -61,7 +61,7 @@ describe("EventBus", () => {
     eventBus.publish({
       type: "TEST_EVENT",
       payload: {
-        products: [{ productId: "1", quantity: 10 }],
+        products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
       },
     });
     expect(mockLogger.info).toHaveBeenCalledWith(
@@ -76,7 +76,7 @@ describe("EventBus", () => {
     eventBus.publish({
       type: "NO_SUBSCRIBERS_EVENT",
       payload: {
-        products: [{ productId: "1", quantity: 10 }],
+        products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
       },
     });
     expect(mockLogger.info).toHaveBeenCalledWith(
@@ -99,7 +99,7 @@ describe("EventBus", () => {
       eventBus.publish({
         type: "FAIL_EVENT",
         payload: {
-          products: [{ productId: "1", quantity: 10 }],
+          products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
         },
       });
     } catch (error) {
@@ -187,7 +187,7 @@ describe("EventBus", () => {
     eventBus.publish({
       type: "SHARED_EVENT",
       payload: {
-        products: [{ productId: "1", quantity: 10 }],
+        products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
       },
     });
 
@@ -214,13 +214,13 @@ describe("EventBus", () => {
     eventBus.publish({
       type: "EVENT_A",
       payload: {
-        products: [{ productId: "1", quantity: 10 }],
+        products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
       },
     });
     eventBus.publish({
       type: "EVENT_B",
       payload: {
-        products: [{ productId: "1", quantity: 10 }],
+        products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
       },
     });
 
@@ -228,13 +228,13 @@ describe("EventBus", () => {
     expect(subscriber.handleEvent).toHaveBeenCalledWith({
       type: "EVENT_A",
       payload: {
-        products: [{ productId: "1", quantity: 10 }],
+        products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
       },
     });
     expect(subscriber.handleEvent).toHaveBeenCalledWith({
       type: "EVENT_B",
       payload: {
-        products: [{ productId: "1", quantity: 10 }],
+        products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
       },
     });
   });
@@ -262,7 +262,7 @@ describe("EventBus", () => {
         // @ts-ignore
         type: eventType,
         payload: {
-          products: [{ productId: "1", quantity: 10 }],
+          products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
         },
       });
     });
@@ -285,14 +285,14 @@ describe("EventBus", () => {
     eventBus.publish({
       type: "EVENT_TYPE",
       payload: {
-        products: [{ productId: "1", quantity: 10 }],
+        products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
       },
     });
     eventBus.publish({
       // @ts-ignore
       type: "event_type",
       payload: {
-        products: [{ productId: "1", quantity: 10 }],
+        products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
       },
     });
 
@@ -310,7 +310,7 @@ describe("EventBus", () => {
     eventBus.publish({
       type: "EVENT_TYPE",
       payload: {
-        products: [{ productId: "1", quantity: 10 }],
+        products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
       },
     });
     expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);
@@ -320,7 +320,7 @@ describe("EventBus", () => {
     eventBus.publish({
       type: "EVENT_TYPE",
       payload: {
-        products: [{ productId: "1", quantity: 10 }],
+        products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
       },
     });
     expect(subscriber.handleEvent).toHaveBeenCalledTimes(1);
@@ -337,7 +337,7 @@ describe("EventBus", () => {
     eventBus.publish({
       type: "SPECIAL_EVENT@123",
       payload: {
-        products: [{ productId: "1", quantity: 10 }],
+        products: [{ productId: "1", quantity: 10, unitPrice: 100 }],
       },
     });
 

@@ -29,10 +29,13 @@ export class SupplierService {
       return false;
     }
 
+    const reOrderQty = event.payload.products[0].quantity;
+
     const { productId } = event.payload.products[0];
-    this.logger.info(`Reordering stock for product ${productId}`);
 
     const product = this.inventoryRepository.getById(productId);
+
+    const unitCost = event.payload.products[0].unitPrice;
 
     if (!product) {
       this.logger.error(
@@ -42,16 +45,16 @@ export class SupplierService {
     }
     // Assignment Brief: Receive new inventory and update stock quantities.
     product.replenishToFullStock();
+
     this.inventoryRepository.update(product);
     this.eventBus.publish({
       type: "StockReplenished",
       payload: {
         products: [
           {
-            productId: product.getId(),
-            quantity:
-              product.getMaximumStockLevel() - product.getCurrentStock(),
-            unitCost: product.getBasePrice(),
+            productId: product.getId(), // this is "product-001"
+            quantity: reOrderQty, // this is 45
+            unitPrice: product.getBasePrice(), // this is 100
           },
         ],
       },

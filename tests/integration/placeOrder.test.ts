@@ -5,6 +5,7 @@ import { CustomerRepository } from "../../src/repository/CustomerRepository";
 import { InventoryRepository } from "../../src/repository/InventoryRepository";
 import { OrderRepository } from "../../src/repository/OrderRepository";
 import { CustomerService } from "../../src/services/CustomerService";
+import { FinancialReportService } from "../../src/services/FinancialReportService";
 import { InventoryService } from "../../src/services/InventoryService";
 import { SupplierService } from "../../src/services/SupplierService";
 import { CustomerOrder } from "../../src/types";
@@ -22,6 +23,7 @@ describe("E2E: placeOrder flow", () => {
   let inventoryRepository: InventoryRepository;
   let inventoryService: InventoryService;
   let supplierService: SupplierService;
+  let financialReportService: FinancialReportService;
 
   beforeEach(() => {
     mockLogger = {
@@ -57,10 +59,18 @@ describe("E2E: placeOrder flow", () => {
       inventoryRepository,
       eventBus
     );
-
+    financialReportService = new FinancialReportService(
+      mockLogger,
+      inventoryRepository
+    );
     eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
 
     eventBus.subscribe(EVENT_TYPES.REORDER_STOCK, supplierService);
+    eventBus.subscribe(
+      EVENT_TYPES.CUSTOMER_ORDER_CREATED,
+      financialReportService
+    );
+    eventBus.subscribe(EVENT_TYPES.STOCK_REPLENISHED, financialReportService);
   });
 
   afterEach(() => {
@@ -249,5 +259,76 @@ describe("E2E: placeOrder flow", () => {
     const product = inventoryRepository.getById("product-001");
     expect(product).toBeDefined();
     expect(product!.getCurrentStock()).toBe(50);
+  });
+  it.only("calculates total sales correctly from CustomerOrderCreated event", () => {
+    //We create the order and publish the event
+    const orderId: string = "1";
+    const customerId: string = "1";
+    const orderData: CustomerOrder = {
+      customerId,
+      id: orderId,
+      orderDate: new Date().toISOString(),
+      products: [
+        {
+          productId: "product-001",
+          quantity: 45,
+          unitPrice: 30,
+        },
+      ],
+    };
+
+    const publishSpy = vi.spyOn(eventBus, "publish");
+    const handleSpy = vi.spyOn(financialReportService, "handleEvent");
+
+    customerService.placeOrder(orderId, orderData);
+
+    const calls = publishSpy.mock.calls;
+
+    expect(calls[0][0]).toEqual({
+      type: EVENT_TYPES.CUSTOMER_ORDER_CREATED,
+      payload: {
+        products: [
+          {
+            productId: "product-001",
+            quantity: 45,
+            unitPrice: 30,
+          },
+        ],
+      },
+    });
+
+    expect(calls[1][0]).toEqual({
+      type: EVENT_TYPES.REORDER_STOCK,
+      payload: {
+        products: [
+          {
+            productId: "product-001",
+            quantity: 45,
+            unitPrice: 30,
+          },
+        ],
+      },
+    });
+
+    expect(calls[2][0]).toEqual({
+      type: EVENT_TYPES.STOCK_REPLENISHED,
+      payload: {
+        products: [
+          {
+            productId: "product-001",
+            quantity: 45,
+            unitPrice: 10,
+          },
+        ],
+      },
+    });
+
+    expect(publishSpy).toHaveBeenCalledTimes(3);
+
+    expect(financialReportService.getReport()).toEqual({
+      totalSales: 1350,
+      totalPurchases: 450,
+      netIncome: 900,
+    });
   });
 });

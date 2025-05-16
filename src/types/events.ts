@@ -2,80 +2,70 @@
 
 export interface EventMap {
   CustomerOrderCreated: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   ReorderStock: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   StockReplenished: {
-    products: StockProduct[];
+    products: IOrderItem[];
   };
   TEST_EVENT: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   NO_SUBSCRIBERS_EVENT: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   FAIL_EVENT: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   EVENT_X: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   EVENT_Y: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   NON_EXISTENT_EVENT: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   SINGLE_EVENT: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   SHARED_EVENT: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   EVENT_A: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   EVENT_B: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   EVENT_TYPE: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   ["SPECIAL_EVENT@123"]: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   EVENT_1: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   EVENT_2: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
   EVENT_3: {
-    products: OrderProduct[];
+    products: IOrderItem[];
   };
 }
-export interface StockProduct extends OrderProduct {
-  unitCost: number;
-}
-export interface OrderProduct {
+
+export interface IOrderItem {
   productId: string;
   quantity: number;
+  unitPrice: number;
 }
 
 export interface IEvent<K extends keyof EventMap = keyof EventMap> {
   type: K;
   payload: EventMap[K];
-}
-
-export interface CustomerOrderCreatedEvent extends IEvent {
-  type: "CustomerOrderCreated";
-  payload: {
-    customerId: string;
-    orderId: string;
-    products: OrderProduct[];
-  };
 }
 
 export const EVENT_TYPES = {

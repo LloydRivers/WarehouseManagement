@@ -32,9 +32,10 @@ export class CustomerService {
     this.eventBus.publish({
       type: "CustomerOrderCreated",
       payload: {
-        products: order.products.map(({ productId, quantity }) => ({
+        products: order.products.map(({ productId, quantity, unitPrice }) => ({
           productId,
           quantity,
+          unitPrice,
         })),
       },
     });

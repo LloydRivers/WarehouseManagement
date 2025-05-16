@@ -30,7 +30,7 @@ export class InventoryService implements ISubscriber {
   private processOrderCreatedEvent(event: IEvent): void {
     const { products } = event.payload;
 
-    products.forEach(({ productId, quantity }) => {
+    products.forEach(({ productId, quantity, unitPrice }) => {
       const product = this.validateProduct(productId, quantity);
       product.reduceStock(quantity);
       this.inventoryRepository.update(product);
@@ -45,7 +45,7 @@ export class InventoryService implements ISubscriber {
             `  - Minimum threshold: ${product.getMinimumStockThreshold()}`
         );
 
-        this.publishReorderStockEvent(productId, reorderQty);
+        this.publishReorderStockEvent(productId, reorderQty, unitPrice);
       }
     });
 
@@ -58,7 +58,8 @@ export class InventoryService implements ISubscriber {
    */
   private publishReorderStockEvent(
     productId: string,
-    reorderQty: number
+    reorderQty: number,
+    unitPrice: number
   ): void {
     this.eventBus.publish({
       type: "ReorderStock",
@@ -67,6 +68,7 @@ export class InventoryService implements ISubscriber {
           {
             productId,
             quantity: reorderQty,
+            unitPrice: unitPrice,
           },
         ],
       },

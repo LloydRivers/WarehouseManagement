@@ -12,6 +12,7 @@ import { EVENT_TYPES } from "./types/events";
 import { InMemoryProductDataSource } from "./loader/InMemoryProductDataSource";
 import { InventoryRepository } from "./repository/InventoryRepository";
 import { SupplierService } from "./services/SupplierService";
+import { FinancialReportService } from "./services/FinancialReportService";
 
 const logger = new ConsoleLogger();
 const eventBus = new EventBus(logger);
@@ -39,21 +40,30 @@ const supplierService = new SupplierService(
   inventoryRepository,
   eventBus
 );
+
+const financialReportService = new FinancialReportService(
+  logger,
+  inventoryRepository
+);
+
 // Subscribe to events
 eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
 eventBus.subscribe(EVENT_TYPES.REORDER_STOCK, supplierService);
-eventBus.subscribe(EVENT_TYPES.STOCK_REPLENISHED, inventoryService);
+eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, financialReportService);
+eventBus.subscribe(EVENT_TYPES.STOCK_REPLENISHED, financialReportService);
 
 // Assignment Brief: Process customer orders, and update inventory levels accordingly.
 customerService.placeOrder("1", {
+  // We pass all this stuff atually
   customerId: "1",
   id: "1",
+  // We pass the date
   orderDate: new Date().toISOString(),
   products: [
     {
       productId: "product-001",
       quantity: 45,
-      unitPrice: 10,
+      unitPrice: 20,
     },
   ],
 });

@@ -18,9 +18,6 @@ export interface IAddress {
   country: string;
   phoneNumber: string;
 }
-export interface IShippingAddress extends IAddress {
-  deliveryInstructions?: string;
-}
 
 export interface ISupplier {
   id: string;

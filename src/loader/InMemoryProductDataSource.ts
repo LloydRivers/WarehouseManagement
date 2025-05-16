@@ -13,10 +13,10 @@ export class InMemoryProductDataSource implements IProductDataSource {
       "Concrete Mix",
       "High-quality concrete mix",
       "RAW_MATERIAL",
-      100, // base price
+      10, // base price
       50, // current stock
       50, // max stock level
-      10, // min stock threshold
+      10 // min stock threshold
     ),
   ];
 
