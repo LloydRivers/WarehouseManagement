@@ -3,8 +3,8 @@ export class Supplier {
     public readonly id: string,
     public readonly name: string,
     public price: number,
-    public contactDetails?: string, // optional contact details
-    public orderHistory?: string[] // optional order history
+    public contactDetails?: string,
+    public orderHistory?: string[]
   ) {}
 
   getId(): string {
@@ -15,7 +15,6 @@ export class Supplier {
     return this.name;
   }
 
-  // Optionally add more methods to interact with contact details and order history if needed
   getContactDetails(): string | undefined {
     return this.contactDetails;
   }

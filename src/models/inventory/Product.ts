@@ -1,8 +1,8 @@
 // src/models/Product.ts
-// TODO: add some information about this class.
 import { DomainError } from "../../utils/Error";
 import { Supplier } from "../Supplier/Supplier";
 
+// Assignment Brief: Abstract Class and Inheritance
 export abstract class Product {
   constructor(
     public supplier: Supplier,
@@ -63,6 +63,6 @@ export abstract class Product {
   isBelowThreshold(): boolean {
     return this.currentStock < this.minimumStockThreshold;
   }
-
+  // Assignment Brief: Polymorphism
   abstract calculateDiscountedPrice(discountRate: number): number;
 }
