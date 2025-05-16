@@ -8,6 +8,7 @@ export class Customer {
   constructor(
     public readonly id: string,
     public readonly name: string,
+    public readonly address: string,
     email: string
   ) {
     this.setEmail(email);

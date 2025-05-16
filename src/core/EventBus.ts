@@ -9,9 +9,12 @@ import { ILogger } from "../utils/Logger";
  * when those events are published.
  */
 export class EventBus {
+  // Assignment Brief: Map from event type keys to subscriber sets: supports polymorphic event handling
   private subscribers: Map<keyof EventMap, Set<ISubscriber>> = new Map();
   private readonly logger: ILogger;
-
+  /**
+   * Constructor using dependency injection pattern.
+   */
   constructor(logger: ILogger) {
     this.logger = logger;
   }
@@ -145,7 +148,10 @@ export class EventBus {
 
     return unsubscribedCount;
   }
-
+  /**
+   * Publishes an event to all subscribers of the event's type.
+   * Event dispatch is synchronous with error handling per subscriber.
+   */
   publish<K extends keyof EventMap>(event: IEvent<K>): void {
     if (!event || !event.type) {
       this.logger.error(
