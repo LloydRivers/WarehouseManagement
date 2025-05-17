@@ -1,63 +1,13 @@
-// index.ts
-
 import * as readline from "readline";
-import { InMemoryCustomerDataSource } from "./loader/InMemoryCustomerDataSource";
-import { CustomerRepository } from "./repository/CustomerRepository";
-import { ConsoleLogger } from "./utils/Logger";
-import { OrderRepository } from "./repository/OrderRepository";
-import { EventBus } from "./core/EventBus";
-import { CustomerService } from "./services/CustomerService";
-import { SupplierService } from "./services/SupplierService";
-import { InventoryService } from "./services/InventoryService";
-import { EVENT_TYPES } from "./types/events";
-import { InMemoryProductDataSource } from "./loader/InMemoryProductDataSource";
-import { InventoryRepository } from "./repository/InventoryRepository";
-import { FinancialReportService } from "./services/FinancialReportService";
+import { createApp } from "./app";
 
-const logger = new ConsoleLogger();
-const eventBus = new EventBus(logger);
+const { customerService, financialReportService } = createApp();
 
-const customerDataSource = new InMemoryCustomerDataSource();
-const customerRepository = new CustomerRepository(customerDataSource);
-
-const inventoryDataSource = new InMemoryProductDataSource();
-
-const orderRepository = new OrderRepository();
-const customerService = new CustomerService(
-  customerRepository,
-  orderRepository,
-  eventBus
-);
-const inventoryRepository = new InventoryRepository(inventoryDataSource);
-const inventoryService = new InventoryService(
-  logger,
-  inventoryRepository,
-  eventBus
-);
-
-const supplierService = new SupplierService(
-  logger,
-  inventoryRepository,
-  eventBus
-);
-
-const financialReportService = new FinancialReportService(logger);
-
-// Register subscribers to domain events.
-// This follows the event-driven architecture pattern, enabling loose coupling between services.
-// Each service reacts to events independently, supporting scalability and separation of concerns.
-eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
-eventBus.subscribe(EVENT_TYPES.REORDER_STOCK, supplierService);
-eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, financialReportService);
-eventBus.subscribe(EVENT_TYPES.STOCK_REPLENISHED, financialReportService);
-
-// Assignment Brief: Create a way a user can interact with the system
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-// Menu function
 function menu(): void {
   console.log("\nWarehouse Management System");
   console.log("1. Place Order");
@@ -66,7 +16,6 @@ function menu(): void {
   rl.question("Choose an option: ", handleMenu);
 }
 
-// Handle menu options
 function handleMenu(choice: string): void {
   switch (choice) {
     case "1":
@@ -81,7 +30,7 @@ function handleMenu(choice: string): void {
       menu();
   }
 }
-// Assignment Brief: Process customer orders, and update inventory levels accordingly.
+
 function placeOrder(): void {
   rl.question("Enter Customer ID: ", (customerId) => {
     rl.question("Enter Product ID: ", (productId) => {
@@ -115,23 +64,4 @@ function viewReport(): void {
   menu();
 }
 
-// Start the menu
 menu();
-
-/*
-This was the original code that has now been replaced with the menu function to meet the assignment brief.
--------------------------------------
-customerService.placeOrder("1", {
-  customerId: "1",
-  id: "1",
-  // We pass the date
-  orderDate: new Date().toISOString(),
-  products: [
-    {
-      productId: "product-001",
-      quantity: 45,
-      unitPrice: 30,
-    },
-  ],
-});
-*/

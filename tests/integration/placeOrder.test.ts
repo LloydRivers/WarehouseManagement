@@ -1,8 +1,11 @@
 import { EventBus } from "../../src/core/EventBus";
 import { InMemoryCustomerDataSource } from "../../src/loader/InMemoryCustomerDataSource";
 import { InMemoryProductDataSource } from "../../src/loader/InMemoryProductDataSource";
+import { InMemorySupplierDataSource } from "../../src/loader/InMemorySupplierRepository";
 import { CustomerRepository } from "../../src/repository/CustomerRepository";
 import { InventoryRepository } from "../../src/repository/InventoryRepository";
+import { PurchaseOrderRepository } from "../../src/repository/PurchaseOrderRepository";
+import { SupplierRepository } from "../../src/repository/SupplierRepository";
 import { OrderRepository } from "../../src/repository/OrderRepository";
 import { CustomerService } from "../../src/services/CustomerService";
 import { FinancialReportService } from "../../src/services/FinancialReportService";
@@ -24,6 +27,9 @@ describe("E2E: placeOrder flow", () => {
   let inventoryService: InventoryService;
   let supplierService: SupplierService;
   let financialReportService: FinancialReportService;
+  let purchaseOrderRepository: PurchaseOrderRepository;
+  let supplierRepository: SupplierRepository;
+  let supplierDataSource: InMemorySupplierDataSource;
 
   beforeEach(() => {
     mockLogger = {
@@ -37,7 +43,11 @@ describe("E2E: placeOrder flow", () => {
     customerDataSource = new InMemoryCustomerDataSource();
     customerRepository = new CustomerRepository(customerDataSource);
 
-    inventoryDataSource = new InMemoryProductDataSource();
+    supplierDataSource = new InMemorySupplierDataSource();
+    supplierRepository = new SupplierRepository(supplierDataSource);
+
+    // 🔁 FIX: define this BEFORE injecting into inventoryRepository
+    inventoryDataSource = new InMemoryProductDataSource(supplierRepository);
     inventoryRepository = new InventoryRepository(inventoryDataSource);
 
     orderRepository = new OrderRepository();
@@ -54,14 +64,18 @@ describe("E2E: placeOrder flow", () => {
       eventBus
     );
 
+    purchaseOrderRepository = new PurchaseOrderRepository();
     supplierService = new SupplierService(
       mockLogger,
       inventoryRepository,
-      eventBus
+      eventBus,
+      purchaseOrderRepository,
+      supplierRepository
     );
-    financialReportService = new FinancialReportService(mockLogger);
-    eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
 
+    financialReportService = new FinancialReportService(mockLogger);
+
+    eventBus.subscribe(EVENT_TYPES.CUSTOMER_ORDER_CREATED, inventoryService);
     eventBus.subscribe(EVENT_TYPES.REORDER_STOCK, supplierService);
     eventBus.subscribe(
       EVENT_TYPES.CUSTOMER_ORDER_CREATED,
@@ -236,6 +250,7 @@ describe("E2E: placeOrder flow", () => {
           {
             productId: "product-001",
             quantity: 45,
+            unitPrice: 10,
           },
         ],
       },
@@ -247,6 +262,7 @@ describe("E2E: placeOrder flow", () => {
           {
             productId: "product-001",
             quantity: 45,
+            unitPrice: 10,
           },
         ],
       },
@@ -275,7 +291,6 @@ describe("E2E: placeOrder flow", () => {
     };
 
     const publishSpy = vi.spyOn(eventBus, "publish");
-    const handleSpy = vi.spyOn(financialReportService, "handleEvent");
 
     customerService.placeOrder(orderId, orderData);
 

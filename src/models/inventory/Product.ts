@@ -20,6 +20,9 @@ export abstract class Product {
   getId(): string {
     return this.id;
   }
+  getSupplierId(): string {
+    return this.supplierId;
+  }
 
   getName(): string {
     return this.name;
