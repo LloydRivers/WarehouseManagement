@@ -14,7 +14,7 @@ export class CustomerService {
     private orderRepository: OrderRepository,
     private eventBus: EventBus
   ) {}
-
+  // Assignment Brief: Implement a method to place an order for a customer.
   placeOrder(customerId: string, order: CustomerOrder): void {
     this.validateOrder(customerId, order);
     const customer = this.customerRepository.getById(customerId);

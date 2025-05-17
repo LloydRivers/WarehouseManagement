@@ -80,7 +80,7 @@ export class SupplierService {
 
     return { product, supplier };
   }
-
+  // Assignment Brief: Create a purchase order with the supplier and product details
   private createAndSavePurchaseOrder(
     supplierId: string,
     productId: string,
@@ -118,5 +118,21 @@ export class SupplierService {
         ],
       },
     });
+  }
+  // Assignment Brief: Implement features to add, update, and delete supplier records.
+  updateSupplier(updatedSupplier: Supplier): void {
+    const existingSupplier = this.supplierRepository.getById(
+      updatedSupplier.getId()
+    );
+    if (!existingSupplier) {
+      throw new DomainError(
+        `Cannot update non-existent supplier with ID ${updatedSupplier.getId()}`
+      );
+    }
+    this.supplierRepository.update(updatedSupplier);
+
+    this.logger.info(
+      `Supplier ${updatedSupplier.getId()} updated successfully.`
+    );
   }
 }

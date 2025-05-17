@@ -8,7 +8,6 @@ interface FinancialReport {
   netIncome: number;
 }
 
-// Type guard functions to ensure type safety
 function isCustomerOrderCreated(
   event: IEvent
 ): event is IEvent & { type: "CustomerOrderCreated" } {
@@ -34,7 +33,7 @@ export class FinancialReportService {
     this.logger.info(
       `FinancialReportService: Handling event of type ${event.type}`
     );
-
+    // Assignment Brief: Track financial transactions related to inventory purchases and sales
     if (isCustomerOrderCreated(event)) {
       for (const item of event.payload.products) {
         const revenue = item.quantity * item.unitPrice;
@@ -48,7 +47,7 @@ export class FinancialReportService {
       }
     }
   }
-
+  // Assignment Brief: Generate basic financial reports such as sales summaries and expense reports.
   getReport(): FinancialReport {
     return {
       totalSales: this.totalSales,

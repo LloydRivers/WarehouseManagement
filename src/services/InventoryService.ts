@@ -32,6 +32,7 @@ export class InventoryService implements ISubscriber {
 
     products.forEach(({ productId, quantity, unitPrice }) => {
       const product = this.validateProduct(productId, quantity);
+      // Assignment Brief: Reduce stock when an order is created.
       product.reduceStock(quantity);
       this.inventoryRepository.update(product);
       // Assignment Brief: Monitor low stock alerts to prevent stockouts.

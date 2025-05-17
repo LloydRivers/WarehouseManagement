@@ -1,5 +1,5 @@
 import { Address } from "./Address";
-
+// Assignment Brief: Maintain basic supplier information, including contact details and order history
 export class Supplier {
   constructor(
     private readonly id: string,
@@ -41,15 +41,6 @@ export class Supplier {
   addOrder(orderId: string): void {
     if (!this.orderHistory.includes(orderId)) {
       this.orderHistory.push(orderId);
-      console.log("_________________________");
-      console.log(`Order ${orderId} added to supplier ${this.id}`);
-      console.log("_________________________");
-
-      console.log("_________________________");
-      console.log("_________________________");
-      console.log(`Supplier Order History: ${this.orderHistory}`);
-      console.log("_________________________");
-      console.log("_________________________");
     }
   }
   removeOrder(orderId: string): boolean {
