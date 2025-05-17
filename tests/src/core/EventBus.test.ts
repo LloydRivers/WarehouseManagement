@@ -1,33 +1,8 @@
 // tests/src/core/EventBus.test.ts
-/**
- * Edge Cases and Robustness Tests
-
-Test handling duplicate subscriptions (should warn and not duplicate)
-Test publishing events with no subscribers
-Test error handling when a subscriber throws an exception during event handling
-Test unsubscribing a subscriber that was never subscribed
-Test unsubscribing from an event type that doesn't exist
-Test that empty subscriber lists are removed after unsubscribing
-Test behavior with multiple subscribers for the same event
-Test behavior with a single subscriber for multiple event types
-Test performance with a large number of subscribers and events
-
-Specific Edge Cases to Consider
-
-
-Handling malformed events or invalid event types
-Case sensitivity in event type strings
-Proper cleanup of subscriber arrays to avoid memory leaks
-Special characters in event type names
-Handling of null or undefined values passed as parameters
-Circular dependencies between subscribers
- * 
- */
 import { vi } from "vitest";
 import { EventBus } from "../../../src/core/EventBus";
 import { ConsoleLogger } from "../../../src/utils/Logger";
 import { ISubscriber } from "../../../src/types/subscriber";
-import { InventoryService } from "../../../src/services/InventoryService";
 
 describe("EventBus", () => {
   let eventBus: EventBus;
