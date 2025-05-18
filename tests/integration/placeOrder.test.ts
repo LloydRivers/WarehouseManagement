@@ -273,7 +273,7 @@ describe("E2E: placeOrder flow", () => {
     expect(product).toBeDefined();
     expect(product!.getCurrentStock()).toBe(50);
   });
-  it.only("calculates total sales correctly from CustomerOrderCreated event", () => {
+  it("calculates total sales correctly from CustomerOrderCreated event", () => {
     //We create the order and publish the event
     const orderId: string = "1";
     const customerId: string = "1";

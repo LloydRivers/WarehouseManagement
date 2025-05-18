@@ -16,6 +16,9 @@ When placing an order, the following happens:
 - EventBus notifies all subscribers (InventoryService, FinancialReportService, etc.).
 - The inventory is updated, and financial data is recalculated.
 
+📁 **For a high-level system overview, see [`sequence.md`](./sequence.md)**
+This file contains a Mermaid sequence diagram that visually outlines the main event-driven flow of the application.
+
 ### 🧪 Example Event Chain
 
 ```
@@ -26,13 +29,18 @@ When placing an order, the following happens:
 Triggers:
 
 1. `CUSTOMER_ORDER_CREATED`
+
    - Reduces inventory
    - Records sales revenue
+
 2. If inventory < threshold:
+
    - `REORDER_STOCK`
    - Triggers stock replenishment
    - Records purchase cost
+
 3. `STOCK_REPLENISHED`
+
    - Updates stock
    - Updates financial report
 
@@ -77,10 +85,8 @@ Every architectural decision was made to reinforce a mental model of modern back
 
 ### 🧑‍💻 Author Notes
 
-This project was built entirely from scratch with zero scaffolding. Every class, event, and interface was handcrafted to strengthen understanding of:
+This project was built entirely from scratch with zero scaffolding. Every class, event, and interface was written to strengthen my understanding of:
 
 - Real-world software architecture
 - Decoupled systems via event buses
 - The power of ownership in engineering logic
-
-It's not just code—it's a thinking exercise in building maintainable, scalable systems.

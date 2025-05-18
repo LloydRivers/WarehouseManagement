@@ -59,7 +59,9 @@ export class SupplierService {
   private isReorderStockEvent(event: IEvent): boolean {
     return event.type === "ReorderStock";
   }
-
+  // Only this code is untested so far
+  // Only this code is untested so far
+  // Only this code is untested so far
   private fetchProductAndSupplier(productId: string): {
     product: Product;
     supplier: Supplier;
@@ -97,6 +99,10 @@ export class SupplierService {
 
     this.purchaseOrderRepository.save(purchaseOrder);
     return purchaseOrder;
+
+    // Only this code is untested so far
+    // Only this code is untested so far
+    // Only this code is untested so far
   }
 
   private replenishStockAndPublishEvent(
