@@ -32,7 +32,7 @@ export class InMemoryProductDataSource implements IProductDataSource {
         "RAW_MATERIAL",
         10, // base price
         50, // current stock
-        50, // max stock level
+        50, // max stock levele
         10 // min stock threshold
       ),
     ];

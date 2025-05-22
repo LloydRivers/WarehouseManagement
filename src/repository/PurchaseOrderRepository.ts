@@ -6,9 +6,6 @@ export class PurchaseOrderRepository {
 
   save(order: PurchaseOrder): void {
     this.orders.push(order);
-    console.log("_______________________");
-    console.log("Purchase Order saved:", order);
-    console.log("_______________________");
   }
 
   getBySupplierId(supplierId: string): PurchaseOrder[] {
