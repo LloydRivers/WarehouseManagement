@@ -98,4 +98,14 @@ export class InventoryService implements ISubscriber {
 
     return product;
   }
+  // Assignment Brief: Allow the user to view all stock in the inventory.
+  getAllStock() {
+    const products = this.inventoryRepository.getAllStock();
+    if (!products || products.length === 0) {
+      this.logger.warn("No products found in inventory");
+      return [];
+    }
+    this.logger.info(`Retrieved ${products.length} products from inventory`);
+    return products;
+  }
 }
