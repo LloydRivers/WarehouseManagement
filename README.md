@@ -1,92 +1,176 @@
-# Warehouse Management System
+# 📦 Warehouse Management System
 
-### 🧠 CLI Flow
+> A modern, event-driven warehouse management solution built with TypeScript and Node.js
+
+## 🚀 Quick Start
+
+Get up and running in seconds:
+
+```bash
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+> **⚠️ Important:** Use valid product IDs like `product-001` when testing. The application doesn't generate random inventory data.
+
+---
+
+## 🎯 System Overview
+
+The Warehouse Management System is an event-driven application that demonstrates modern backend architecture patterns. It provides a command-line interface for managing inventory, processing orders, and generating financial reports.
+
+### ⚡ Main Features
+
+- **Order Processing** - Handle customer orders with real-time inventory updates
+- **Inventory Management** - Automatic stock monitoring and reordering
+- **Financial Reporting** - Dynamic profit/loss calculations
+- **Event-Driven Architecture** - Decoupled services communicating via EventBus
+
+---
+
+## 🖥️ CLI Interface
+
+When you run the application, you'll see:
 
 ```
-Warehouse Management System
-1. Place Order
-2. View Financial Report
-3. Exit
+🏭 Warehouse Management System
+══════════════════════════════
+
+1. 📦 Place Order
+2. 📊 View Financial Report
+3. 🚪 Exit
+
+Choose an option:
 ```
 
-When placing an order, the following happens:
+### 🔄 Order Processing Flow
 
-- User inputs customer ID, product ID, and quantity.
-- The order is processed through CustomerService.
-- EventBus notifies all subscribers (InventoryService, FinancialReportService, etc.).
-- The inventory is updated, and financial data is recalculated.
+When placing an order, the system orchestrates the following sequence:
 
-📁 **For a high-level system overview, see [`sequence.md`](./sequence.md)**
-This file contains a Mermaid sequence diagram that visually outlines the main event-driven flow of the application.
+1. **Customer Input** - Collect customer ID, product ID, and quantity
+2. **Order Validation** - Process through CustomerService
+3. **Event Propagation** - EventBus notifies all subscribers
+4. **Inventory Update** - Stock levels automatically adjusted
+5. **Financial Calculation** - Revenue and costs recalculated in real-time
 
-### 🧪 Example Event Chain
+📋 **For detailed system flow, see [`sequence.md`](./sequence.md)** - Contains a comprehensive Mermaid diagram visualizing the complete event-driven architecture.
 
-```
+---
+
+## 🧪 Example Workflow
+
+### Sample Order Processing
+
+```bash
 > Enter Product ID: product-001
 > Enter Quantity: 45
 ```
 
-Triggers:
+**Event Chain Triggered:**
 
-1. `CUSTOMER_ORDER_CREATED`
-
-   - Reduces inventory
-   - Records sales revenue
-
-2. If inventory < threshold:
-
-   - `REORDER_STOCK`
-   - Triggers stock replenishment
-   - Records purchase cost
-
-3. `STOCK_REPLENISHED`
-
-   - Updates stock
-   - Updates financial report
-
-### 📁 Project Structure
-
-```
-.
-├── core/                 # Core utilities (EventBus, interfaces)
-├── loader/               # In-memory data loaders
-├── repository/           # Repositories for Customer, Inventory, Orders
-├── services/             # Domain logic (Customer, Inventory, Financial, Supplier)
-├── types/                # Event and domain type declarations
-├── utils/                # Logging, helpers
-└── index.ts              # CLI entry point
+```mermaid
+graph LR
+    A[CUSTOMER_ORDER_CREATED] --> B[Inventory Reduced]
+    A --> C[Sales Revenue Recorded]
+    B --> D{Stock < Threshold?}
+    D -->|Yes| E[REORDER_STOCK]
+    E --> F[Stock Replenishment]
+    E --> G[Purchase Cost Recorded]
+    F --> H[STOCK_REPLENISHED]
+    H --> I[Inventory Updated]
+    H --> J[Financial Report Updated]
 ```
 
-### 📊 Financial Reporting Example
+---
+
+## 📁 Project Architecture
 
 ```
-=== Financial Report ===
-Total Sales: £900
-Total Purchases: £450
-Net Income: £450
+warehouse-management-system/
+│
+├── 🏗️  core/           # Core utilities & EventBus
+├── 📥  loader/         # In-memory data loaders
+├── 🗄️  repository/     # Data repositories (Customer, Inventory, Orders)
+├── ⚙️  services/       # Business logic services
+├── 📝  types/          # TypeScript type definitions
+├── 🔧  utils/          # Logging & helper utilities
+└── 🎯  index.ts        # CLI application entry point
 ```
 
-Note: Values are computed dynamically based on emitted events and stored state.
+### 🏛️ Architecture Principles
 
-### 📌 Tech Stack
+- **Event-Driven Design** - Loose coupling via EventBus pattern
+- **Domain-Driven Development** - Clear separation of business logic
+- **Repository Pattern** - Abstracted data access layer
+- **Service Layer** - Encapsulated business operations
 
-- **Language**: TypeScript
-- **Architecture**: Event-driven, Modular, OOP
-- **Runtime**: Node.js
-- **Storage**: In-memory only (for simulation purposes)
+---
 
-### 🧠 Educational Value
+## 💰 Financial Reporting
 
-This project was built with a strict learning philosophy:
+The system provides real-time financial insights:
 
-> "Don't hand over code—force deep ownership of the logic."
+```
+═══════════════════════════════
+        📊 Financial Report
+═══════════════════════════════
+💰 Total Sales:     £900.00
+💸 Total Purchases: £450.00
+📈 Net Income:      £450.00
+═══════════════════════════════
+```
 
-Every architectural decision was made to reinforce a mental model of modern backend systems. Debugging, event tracing, and state management are done by thinking like the system, not just reading code.
+> **Note:** All values are computed dynamically based on real-time events and stored state.
 
-### 🧑‍💻 Author Notes
+---
 
-This project was built entirely from scratch with zero scaffolding. Every class, event, and interface was written to strengthen my understanding of:
+## 🛠️ Technology Stack
 
-- Real-world software architecture
-- Decoupled systems via event buses
-- The power of ownership in engineering logic
+| Category         | Technology                          |
+| ---------------- | ----------------------------------- |
+| **Language**     | TypeScript                          |
+| **Runtime**      | Node.js                             |
+| **Architecture** | Event-Driven, Modular, OOP          |
+| **Storage**      | In-Memory (Simulation)              |
+| **Patterns**     | Repository, Service Layer, EventBus |
+
+---
+
+## 🎓 Educational Philosophy
+
+This project embodies a strict learning approach:
+
+> _"Don't hand over code—force deep ownership of the logic."_
+
+### Key Learning Outcomes
+
+- **System Thinking** - Understanding event-driven architecture
+- **Code Ownership** - Building from scratch to reinforce concepts
+- **Debugging Skills** - Event tracing and state management
+- **Modern Patterns** - Real-world software architecture principles
+
+---
+
+## 👨‍💻 Development Notes
+
+**Built from Zero:** This project was created entirely from scratch with no scaffolding or boilerplate code.
+
+**Learning Focus:** Every class, event, and interface was deliberately crafted to strengthen understanding of:
+
+- ✅ Real-world software architecture patterns
+- ✅ Decoupled system design via event buses
+- ✅ The importance of code ownership in engineering
+- ✅ Modern backend development practices
+
+---
+
+## 📞 Support & Contributions
+
+Found an issue or want to contribute? This project is designed for educational purposes and welcomes feedback from fellow developers learning event-driven architecture.
+
+---
+
+_Built with ❤️ and a commitment to deep learning_
