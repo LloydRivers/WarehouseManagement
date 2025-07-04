@@ -3,31 +3,31 @@ import { Product } from "../models/inventory/Product";
 
 export class InventoryRepository {
   private dataSource: InMemoryProductDataSource;
+  private products: Product[];
+
   /**
    * Constructor using dependency injection pattern.
    */
   constructor(dataSource: InMemoryProductDataSource) {
     this.dataSource = dataSource;
-  }
-
-  private loadProducts(): Product[] {
-    return this.dataSource.loadProducts();
+    this.products = this.dataSource.loadProducts();
   }
 
   getById(productId: string): Product | undefined {
-    const products = this.loadProducts();
-    return products.find((product) => product.getId() === productId);
+    return this.products.find((product) => product.getId() === productId);
   }
 
   update(product: Product): void {
-    const products = this.loadProducts();
-    const existingProduct = products.find(
+    const index = this.products.findIndex(
       (existing) => existing.getId() === product.getId()
     );
-    if (!existingProduct) {
+    if (index === -1) {
       throw new Error("Cannot update non-existent product");
     }
-    const index = products.indexOf(existingProduct);
-    products[index] = product;
+    this.products[index] = product;
+  }
+
+  getAllStock() {
+    return this.products;
   }
 }
