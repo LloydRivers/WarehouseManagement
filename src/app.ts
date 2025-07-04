@@ -65,5 +65,8 @@ export function createApp() {
   return {
     customerService,
     financialReportService,
+    inventoryService,
+    supplierService,
   };
+  
 }
