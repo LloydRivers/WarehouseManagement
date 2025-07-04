@@ -26,7 +26,7 @@ export class InventoryRepository {
     }
     this.products[index] = product;
   }
-
+  // Assignment Brief: Allow the user to view all stock in the inventory.
   getAllStock() {
     return this.products;
   }

@@ -3,30 +3,28 @@ import { Supplier } from "../models/Supplier/Supplier";
 
 export class SupplierRepository {
   private dataSource: InMemorySupplierDataSource;
+  private suppliers: Supplier[];
 
+  /**
+   * Constructor using dependency injection pattern.
+   */
   constructor(dataSource: InMemorySupplierDataSource) {
     this.dataSource = dataSource;
-  }
-
-  private loadSuppliers(): Supplier[] {
-    return this.dataSource.loadSuppliers();
+    this.suppliers = this.dataSource.loadSuppliers();
   }
 
   getById(supplierId: string): Supplier | undefined {
-    const suppliers = this.loadSuppliers();
-    return suppliers.find((supplier) => supplier.getId() === supplierId);
+    return this.suppliers.find((supplier) => supplier.getId() === supplierId);
   }
 
   update(updated: Supplier): void {
-    const suppliers = this.loadSuppliers();
-    const existingSupplier = suppliers.find(
+    const index = this.suppliers.findIndex(
       (existing) => existing.getId() === updated.getId()
     );
-    if (!existingSupplier) {
+    if (index === -1) {
       throw new Error("Cannot update non-existent supplier");
     }
-    const index = suppliers.indexOf(existingSupplier);
-    suppliers[index] = updated;
+    this.suppliers[index] = updated;
   }
 
   updateSupplierPrice(supplierId: string, newPrice: number): void {
@@ -34,7 +32,10 @@ export class SupplierRepository {
     if (!supplier) {
       throw new Error("Supplier not found");
     }
-
     supplier.setPrice(newPrice);
+  }
+  // Assignment Brief: Allow the user to view all suppliers in the system.
+  getAll(): Supplier[] {
+    return this.suppliers;
   }
 }
