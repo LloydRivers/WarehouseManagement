@@ -139,4 +139,14 @@ export class SupplierService {
       `Supplier ${updatedSupplier.getId()} updated successfully.`
     );
   }
+  // Assignment Brief: Allow the user to view all suppliers in the system.
+  getAllSuppliers(): Supplier[] {
+    const suppliers = this.supplierRepository.getAll();
+    if (!suppliers || suppliers.length === 0) {
+      this.logger.warn("No suppliers found");
+      return [];
+    }
+    this.logger.info(`Retrieved ${suppliers.length} suppliers`);
+    return suppliers;
+  }
 }
