@@ -21,11 +21,8 @@ export class InMemoryProductDataSource implements IProductDataSource {
 
     return [
       new ConcreteMix(
-        //Argument of type 'Supplier | undefined' is not assignable to parameter of type 'Supplier'.
-        // Type 'undefined' is not assignable to type 'Supplier'.ts(2345)
         supplier,
         "product-001",
-        // 'supplier' is possibly 'undefined'.ts(18048)
         supplier.getId(),
         "Concrete Mix",
         "High-quality concrete mix",

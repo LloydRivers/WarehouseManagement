@@ -29,6 +29,5 @@ export class InventoryRepository {
     }
     const index = products.indexOf(existingProduct);
     products[index] = product;
-    // this.dataSource.saveProducts(products);
   }
 }
