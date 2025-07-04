@@ -41,7 +41,9 @@ When you run the application, you'll see:
 
 1. 📦 Place Order
 2. 📊 View Financial Report
-3. 🚪 Exit
+3. 📦 View Inventory Stock Levels
+4. 🏢 View Suppliers
+5. 🚪 Exit
 
 Choose an option:
 ```
