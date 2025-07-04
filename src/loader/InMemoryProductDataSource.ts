@@ -4,6 +4,7 @@ import { Product } from "../models/inventory/Product";
 import { Supplier } from "../models/Supplier/Supplier";
 import { SupplierRepository } from "../repository/SupplierRepository";
 import { IProductDataSource } from "../types/datasource";
+import { baseProductsData } from "../mockData";
 
 /*
  * This in-memory data source simulates persistent storage for products.
@@ -19,19 +20,19 @@ export class InMemoryProductDataSource implements IProductDataSource {
       throw new Error("Supplier not found");
     }
 
-    return [
-      new ConcreteMix(
+    return baseProductsData.map((data) => {
+      return new ConcreteMix(
         supplier,
-        "product-001",
+        data.id,
         supplier.getId(),
-        "Concrete Mix",
-        "High-quality concrete mix",
-        "RAW_MATERIAL",
-        10, // base price
-        50, // current stock
-        50, // max stock levele
-        10 // min stock threshold
-      ),
-    ];
+        data.name,
+        data.description,
+        "Concrete",
+        data.basePrice,
+        data.currentStock,
+        data.maximumStockLevel,
+        data.minimumStockThreshold
+      );
+    });
   }
 }
